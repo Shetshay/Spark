@@ -1,0 +1,250 @@
+* {
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+
+    /*
+     Introduced in IE 10.
+     See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+   */
+    -ms-user-select: none;
+    user-select: none;
+}
+
+
+
+body {
+    margin: 0;
+    background-color: #040406;
+    font-family: 'Poppins', sans-serif;
+    color: white;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+header {
+    background: black;
+    width: 100%;
+
+}
+
+header::after {
+    content: '';
+    display: table;
+    clear: both;
+}
+
+.text {
+    color: white;
+    padding-top: 2%;
+}
+
+.line {
+    width: 100%;
+    height: 4rem;
+    overflow: hidden;
+    padding: 0px 0px 50px 0px;
+    margin-bottom: 16px;
+}
+
+.lineUp {
+    animation: 2s anim-lineUp ease-out;
+}
+
+
+.wrapper {
+    position: absolute;
+    display: inline-block;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+    padding: 20px;
+}
+
+.wrapper2 {
+    position: absolute;
+    display: inline-block;
+    bottom: 0;
+    right: 0;
+    cursor: pointer;
+    padding: 20px;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 5%;
+    z-index: 1;
+    display: none;
+    min-width: 120px;
+    padding: 5px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+    transform: translateY(-10px);
+    opacity: 0;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+    transform: translateY(0);
+    transition: all 0.3s ease-in-out;
+    opacity: 1;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 5px 15px 5px 5px;
+    text-decoration: none;
+    color: #000000;
+    border-radius: 5px;
+    transition: 0.2s ease-in-out;
+
+
+}
+
+.dropdown-menu a:hover {
+    background-color: #080808;
+}
+
+
+ul {
+    justify-content: space-around;
+}
+
+/* hr {
+    transition-timing-function: ease;
+    margin: 0px 0px 50px 0px;
+    width: 20%;
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0));
+    animation: transitionIn 0.75s;
+
+} */
+
+/* .copyfield {
+    display: flex;
+    align-items: center;
+    background-color: #212121;
+    border-radius: 5px;
+} */
+
+
+.logo {
+    float: left;
+    padding: 10px 0;
+}
+
+
+nav {
+    float: right;
+}
+
+nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+nav li {
+    display: inline-block;
+    margin-left: 70px;
+    padding-top: 33px;
+    position: relative;
+}
+
+
+@keyframes transitionIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+nav a:hover {
+    color: rgb(255, 115, 0);
+}
+
+div a:hover {
+    color: rgb(255, 115, 0);
+}
+
+nav a::before {
+    content: '';
+    display: block;
+    height: 5px;
+    width: 0%;
+    background-color: white;
+    top: 0;
+    transition: all ease-in-out 250ms;
+}
+
+nav a:hover::before {
+    width: 100%;
+}
+
+/* 
+a: {
+    color: inherit;
+} */
+
+/* a:visited {
+    text-decoration: none;
+    color: white;
+} */
+
+
+
+div {
+    color: white;
+}
+
+a {
+    text-decoration: none;
+}
+
+
+@keyframes anim-lineUp {
+    0% {
+        opacity: 0;
+        transform: translateY(80%);
+    }
+
+    20% {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+        transform: translateY(0%);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0%);
+    }
+}
