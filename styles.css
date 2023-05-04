@@ -39,6 +39,7 @@ header {
   background: black;
   width: 100%;
 
+
 }
 
 header::after {
@@ -261,9 +262,9 @@ a {
   --glow-color: hsl(186 100% 69%);
 }
 
-*,
-*::before,
-*::after {
+
+::before,
+::after {
   box-sizing: border-box;
 }
 
