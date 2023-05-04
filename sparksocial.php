@@ -1,3 +1,8 @@
+<?php
+require_once("config.php");
+$db = get_pdo_connection();
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -41,7 +46,8 @@
                 <div class="dropdown-menu">
                     <?php
                     // Check if user is logged in
-                    session_start();
+                    // session_start();
+                    
                     if (isset($_SESSION['uID'])) {
                         // Display logout and edit profile links
                         echo "<a href='logout.php'>Logout</a>";
@@ -79,19 +85,61 @@
             </div>
         </center>
 
-        <!--
-         <?php
-         require_once("config.php");
-         session_start();
-         if (isset($_SESSION['username'])) {
-             echo "<p>Welcome, " . $_SESSION['username'] . "!</p>";
-             echo "<p><a href='logout.php'>Logout</a></p>";
-         } else {
-             echo "<p><a href='login.php'>Login</a> or <a href='register.php'>Register</a></p>";
-         }
-         ?>
+        <center style="padding-top: 75px;">
 
-      -->
+            <?php
+            // Check if user is logged in
+            
+            if (isset($_SESSION['uID'])) {
+                // Display logout and edit profile links
+                echo '<center><div class="container"><a class="button" href="#" style="--color:#1e9bff;">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        Post
+                    </a>
+            </center>';
+            } else {
+
+                // Customer cannot post or view posts
+                echo "You must login in order to post.";
+            }
+            ?>
+
+        </center>
+
+
+        <!-- <center>
+
+            <div class="container">
+                <a class="button" href="#" style="--color:#1e9bff;">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    Post
+                </a>
+
+        </center> -->
+        <!-- 
+        <a class="button" href="#" style="--color: #ff1867;">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            Post
+        </a>
+        <a class="button" href="#" style="--color: #6eff3e;">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            Post
+        </a>
+        </div>
+ -->
+
     </main>
 </body>
 

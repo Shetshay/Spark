@@ -63,38 +63,63 @@
             <div class="line">
                 <h1 class='lineUp'>FAQ.</h1>
             </div>
-            <p style="width:50%; font-size: 24px;">
-            <ul>
-                Q: What is Spark Social?
-            </ul>
-            <li>
-                A: Spark Social is a social media platform that enables people to connect with others, share their
-                thoughts, ideas, and interests.
-            </li>
+        </center>
+        <div style="justify-content: center; align-items: center; display: flex; flex-direction: column;">
+            <p style="margin: 0px 100px 10px 100px;"><b>Q: What is Spark Social?</b></p>
 
             <ul>
-                Q: Is Spark Social free to use?
+                <li>A: <b>Spark Social is a social media platform that enables people to connect with others, share
+                        their
+                        thoughts, ideas, and interests.</b></li>
             </ul>
-            A: Yes, Spark Social is free to use. However, we may introduce premium features in the future that will
-            require a fee.
+            <hr>
+
+
+
+            <p style="margin: 0px 100px 10px 100px;"><b> Q: Is Spark Social free to use?</b></p>
             <ul>
-                Q: Is my personal information safe on Spark Social?
+                <li>A: <b>Yes, Spark Social is free to use. However, we may introduce premium features in the future
+                        that will
+                        require a fee.</b></li>
             </ul>
-            A: Yes, we take the security of our users' personal information very seriously. We use industry-standard
-            security measures to protect your data, and we do not share your information with third parties without your
-            consent.
+            <hr>
+
+
+            <p style="margin: 0px 100px 10px 100px;"><b> Q: Is my personal information safe on Spark Social?</b></p>
             <ul>
-                Q: Can I create a business profile on Spark Social?
+                <li>A: <b>Yes, we take the security of our users' personal information very seriously. We use
+                        industry-standard
+                        security measures to protect your data, and we do not share your information with third
+                        parties without
+                        your
+                        consent.</b></li>
             </ul>
-            A: Yes, you can create a business profile on Spark Social. However, we have specific guidelines for business
-            profiles, and we reserve the right to remove any profiles that violate our policies.
+            <hr>
+
+
+            <p style="margin: 0px 100px 10px 100px;"><b> Q: Can I create a business profile on Spark Social?</b></p>
             <ul>
-                Q: What kind of content is allowed on Spark Social?
+                <li>A: <b>Yes, you can create a business profile on Spark Social. However, we have specific
+                        guidelines for
+                        business
+                        profiles, and we reserve the right to remove any profiles that violate our policies.</b>
+                </li>
             </ul>
-            A: We allow all kinds of content on Spark Social, as long as it does not violate our community guidelines.
-            We do not tolerate hate speech, harassment, or any other form of harmful or offensive content.
-            </p>
-        </center>
+            <hr>
+
+
+            <p style="margin: 0px 100px 10px 100px;"><b> Q: What kind of content is allowed on Spark Social?</b></p>
+            <ul>
+                <li>A: <b>We allow all kinds of content on Spark Social, as long as it does not violate our
+                        community
+                        guidelines.
+                        We do not tolerate hate speech, harassment, or any other form of harmful or offensive
+                        content.</b>
+                </li>
+            </ul>
+            <hr>
+        </div>
+
 
         <!--
          <?php

@@ -1,3 +1,18 @@
+<?php
+require_once("config.php");
+$db = get_pdo_connection();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Handle form submission
+    $content = $_POST['cID'];
+    $user_id = $_SESSION['uID'];
+
+    // Insert new post into database
+    $stmt = $db->prepare("INSERT INTO posts (user_id, content) VALUES (?, ?)");
+    $stmt->execute([$uID, $Content]);
+}
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -25,9 +40,9 @@
                     <li><a href="sparksocial.php">Public</a></li>
                     <li><a href="friends.php">Friends</a></li>
                     <li style="justify-content: center;"><a href="closefriends.php">Close Friends</a></li>
-                    <li><a href="tos.html">TOS</a></li>
-                    <li><a href="faq.html">FAQ</a></li>
-                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="tos.php">TOS</a></li>
+                    <li><a href="faq.php">FAQ</a></li>
+                    <li><a href="about.php">About Us</a></li>
                 </ul>
             </nav>
         </div>
@@ -41,7 +56,6 @@
                 <div class="dropdown-menu">
                     <?php
                     // Check if user is logged in
-                    session_start();
                     if (isset($_SESSION['uID'])) {
                         // Display logout and edit profile links
                         echo "<a href='logout.php'>Logout</a>";
@@ -65,19 +79,106 @@
             </div>
         </center>
 
-        <!--
-         <?php
-         require_once("config.php");
-         session_start();
-         if (isset($_SESSION['username'])) {
-             echo "<p>Welcome, " . $_SESSION['username'] . "!</p>";
-             echo "<p><a href='logout.php'>Logout</a></p>";
-         } else {
-             echo "<p><a href='login.php'>Login</a> or <a href='register.php'>Register</a></p>";
-         }
-         ?>
+        <center style="padding-top: 75px;">
 
-      -->
+            <?php
+            // Check if user is logged in
+            
+            if (isset($_SESSION['uID'])) {
+                // Display logout and edit profile links
+                echo '<center><div class="container"><a class="button" href="#" style="--color:#ff1867;">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        Post
+                    </a>
+            </center>';
+            } else {
+
+                // Customer cannot post or view posts
+                echo "You must login in order to post.";
+            }
+
+
+            // Check if user is logged in
+            if (!isset($_SESSION['uID'])) {
+                // Redirect to login page
+                header("Location: login.php");
+                exit;
+            }
+            echo '<div style="padding-top: 75px;"> </div>';
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                // Get post content from the form
+                $post_content = $_POST['post_content'];
+
+                // Insert post into database
+                $stmt = $db->prepare("INSERT INTO Content (uID, cID) VALUES (?, ?)");
+                $stmt->execute([$_SESSION['uID'], $post_content]);
+
+                // Redirect back to friends page
+                header("Location: friends.php");
+                exit;
+            }
+
+            ?>
+
+            <?php
+            // Retrieve posts from the database
+            $stmt = $db->prepare("SELECT * FROM Content ORDER BY datecreated DESC");
+            $stmt->execute();
+            $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            ?>
+
+            <div class="posts">
+                <?php foreach ($posts as $post): ?>
+                    <div class="post">
+                        <p>
+                            <?= $post['text'] ?>
+                        </p>
+                        <?php
+                        $stmt = $db->prepare("SELECT Content.uID, users.uID FROM Content INNER JOIN users ON content.uID = users.uID ORDER BY Content.datecreated DESC");
+                        $stmt->execute();
+                        $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        ?>
+
+                        <p>Posted by
+                            <?= $post['uID'] ?>
+                        </p>
+
+                        <?php if (isset($_SESSION['uID'])): ?>
+                            <form method="post" action="create_comment.php">
+                                <input type="hidden" name="post_id" value="<?= $post['cID'] ?>">
+                                <textarea name="comment_content" placeholder="Add a comment"></textarea>
+                                <button type="submit">Comment</button>
+                            </form>
+                        <?php endif; ?>
+
+                        <?php
+                        // Retrieve comments for the post from the database
+                        $stmt = $db->prepare("SELECT * FROM Content WHERE cID = ? ORDER BY created_at DESC");
+                        $stmt->execute([$post['cID']]);
+                        $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        ?>
+
+                        <div class="comments">
+                            <?php foreach ($comments as $comment): ?>
+                                <div class="comment">
+                                    <p>
+                                        <?= $comment['cID'] ?>
+                                    </p>
+                                    <p>Commented by
+                                        <?= $comment['uID'] ?>
+                                    </p>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+
+        </center>
+
     </main>
 </body>
 
