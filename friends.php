@@ -124,8 +124,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ?>
 
             <?php
+            $user_id = $_SESSION['uID'];
+            echo $_SESSION['uID'];
             // Retrieve posts from the database
-            $stmt = $db->prepare("SELECT * FROM Content ORDER BY datecreated DESC");
+            $stmt = $db->prepare("SELECT cID, level, datecreated, text, Media, username FROM Content NATURAL JOIN users NATURAL JOIN Canfriend WHERE level = 20 & $user_id = Canfriend.uID1 & Content.uID = Canfriend.uID2 & isfriend = 1 ORDER BY datecreated DESC");
             $stmt->execute();
             $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
             ?>
@@ -136,14 +138,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <p>
                             <?= $post['text'] ?>
                         </p>
-                        <?php
-                        $stmt = $db->prepare("SELECT Content.uID, users.uID FROM Content INNER JOIN users ON content.uID = users.uID ORDER BY Content.datecreated DESC");
-                        $stmt->execute();
-                        $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                        ?>
 
                         <p>Posted by
-                            <?= $post['uID'] ?>
+                            <?= $post['username'] ?>
                         </p>
 
                         <?php if (isset($_SESSION['uID'])): ?>

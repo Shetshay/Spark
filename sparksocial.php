@@ -92,14 +92,7 @@ $db = get_pdo_connection();
             
             if (isset($_SESSION['uID'])) {
                 // Display logout and edit profile links
-                echo '<center><div class="container"><a class="button" href="#" style="--color:#1e9bff;">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        Post
-                    </a>
-            </center>';
+                echo '<button class="glowing-btn"><span class="glowing-txt">P<span class="faulty-letter">O</span>ST</span></button>';
             } else {
 
                 // Customer cannot post or view posts
