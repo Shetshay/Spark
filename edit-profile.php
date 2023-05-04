@@ -42,10 +42,16 @@ $db = get_pdo_connection();
     <main>
         <div class="wrapper">
             <div class="dropdown">
-                <!-- we will need to edit this to allow the pfp to change for users logged in and users NOT logged in
 
--->
-                <img src="images/pfp.png" width="57" height="57" />
+                <?php
+                if (isset($_SESSION['uID'])) {
+                    echo '<img src="images/$picture" width="57" height="57" />';
+                } else {
+                    echo '<img src="images/pfp.png" width="57" height="57" />';
+                }
+                ?>
+
+                <!--\ <img src="images/pfp.png" width="57" height="57" /> -->
                 <div class="dropdown-menu">
                     <?php
                     // Check if user is logged in
