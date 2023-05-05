@@ -79,7 +79,7 @@ if (isset($_SESSION['uID'])) {
             <form action="login.php" method="POST">
                 <div class="container">
                     <label for="email"><b></b></label>
-                    <input style="justify-content: center; flex-direction: column; display: flex;" type="text"
+                    <input style="justify-content: center; flex-direction: column; display: flex;" type="email"
                         placeholder="Enter Email" name="email" required>
 
                     <label for="password"><b></b></label>
@@ -129,8 +129,12 @@ if (isset($_SESSION['uID'])) {
                 exit;
             } else {
                 // Display error message
-                echo ('whats going on');
+        
                 $error_message = 'Invalid email or password';
+
+                echo "<center style='padding-top: 50px; color: red; text-shadow: 0 0 10px red; animation: glowing 2s infinite;'>Invalid email or password</center>";
+
+
             }
         }
         ?>

@@ -42,9 +42,9 @@ if (isset($_SESSION['uID'])) {
                     <li><a href="sparksocial.php">Public</a></li>
                     <li><a href="friends.php">Friends</a></li>
                     <li style="justify-content: center;"><a href="closefriends.php">Close Friends</a></li>
-                    <li><a href="tos.html">TOS</a></li>
-                    <li><a href="faq.html">FAQ</a></li>
-                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="tos.php">TOS</a></li>
+                    <li><a href="faq.php">FAQ</a></li>
+                    <li><a href="about.php">About Us</a></li>
                 </ul>
             </nav>
         </div>
@@ -115,61 +115,61 @@ if (isset($_POST["insert"]) && !empty($_POST["insert_data"])) {
     <?php
     $insert_form = new PhpFormBuilder();
     $insert_form->set_att("method", "POST");
-    // $insert_form->add_input("uID", array(
-//     "type" => "number",
-//     "required" => true
-// ), "uID");
-    $insert_form->add_input("Email", array(
+    $insert_form->add_input("", array(
         "type" => "email",
-        "required" => true
+        "required" => true,
+        "placeholder" => "Enter Email"
     ), "email");
-    $insert_form->add_input("Password", array(
+    $insert_form->add_input("", array(
         "type" => "password",
-        "required" => true
+        "required" => true,
+        "placeholder" => "Enter Password"
     ), "Password");
-    $insert_form->add_input("Username", array(
+    $insert_form->add_input("", array(
         "type" => "text",
-        "required" => true
+        "required" => true,
+        "placeholder" => "Enter Username"
     ), "username");
-    // $insert_form->add_input("datejoin", array(
-//     "type" => "date",
-//     "required" => true
-// ), "datejoin");
-// $insert_form->add_input("bio", array(
-//     "type" => "text",
-//     "required" => false
-// ), "bio");
-// $insert_form->add_input("profilepic", array(
-//     "type" => "text",
-//     "required" => false
-// ), "profilepic");
     $insert_form->add_input("Insert", array(
         "type" => "submit",
-        "value" => "Insert"
+        "value" => "Register"
     ), "insert");
     $insert_form->build_form();
 
     if (!empty($_POST)) {
-        //$uID = $_POST["uID"];
         $email = $_POST["email"];
         $Password = $_POST["Password"];
         $username = $_POST["username"];
-        //$bio = $_POST["bio"];
-        //$profilepic = $_POST["profilepic"];
-    
-        $query2 = $db->prepare("INSERT INTO users (uID, email, Password, username, bio, profilepic) VALUES (:uID, :email, :Password, :username, :bio, :profilepic)");
-        $query2->bindParam(":uID", $uID, PDO::PARAM_INT);
-        $query2->bindParam(":email", $email, PDO::PARAM_STR);
-        $hashed = password_hash($Password, PASSWORD_DEFAULT);
-        $query2->bindParam(":Password", $hashed, PDO::PARAM_STR);
-        $query2->bindParam(":username", $username, PDO::PARAM_STR);
-        $query2->bindParam(":bio", $bio, PDO::PARAM_STR);
-        $query2->bindParam(":profilepic", $profilepic, PDO::PARAM_STR);
 
-        if ($query2->execute()) {
-            echo "User successfully registered!";
+        // Check if username is already taken
+        $query = $db->prepare("SELECT COUNT(*) as count FROM users WHERE username = :username");
+        $query->bindParam(":username", $username, PDO::PARAM_STR);
+        $query->execute();
+        $result = $query->fetch(PDO::FETCH_ASSOC);
+        $count = $result['count'];
+
+        if ($count > 0) {
+            echo "<center style='padding-top: 50px; color: red; text-shadow: 0 0 10px red; animation: glowing 2s infinite;'>Username already taken</center>";
+        } else if (strlen($Password) < 8 || !preg_match("/[0-9]/", $Password)) {
+            echo "<center style='padding-top: 50px; color: red; text-shadow: 0 0 10px red; animation: glowing 2s infinite;'>Invalid password. Password should be at least 8 characters and contain at least one number.</center>";
+        } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            echo "<center style='padding-top: 50px; color: red; text-shadow: 0 0 10px red; animation: glowing 2s infinite;'>Invalid email address</center>";
         } else {
-            echo "Error registering.";
+
+            $query2 = $db->prepare("INSERT INTO users (email, Password, username) VALUES (:email, :Password, :username)");
+            $query2->bindParam(":email", $email, PDO::PARAM_STR);
+            $hashed = password_hash($Password, PASSWORD_DEFAULT);
+            $query2->bindParam(":Password", $hashed, PDO::PARAM_STR);
+            $query2->bindParam(":username", $username, PDO::PARAM_STR);
+
+            // Check if password is at least 8 characters and contains a number
+    
+
+            if ($query2->execute()) {
+                echo "User successfully registered!";
+            } else {
+                echo "Error registering.";
+            }
         }
     }
 

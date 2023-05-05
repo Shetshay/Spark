@@ -3,6 +3,13 @@ require_once("config.php");
 $db = get_pdo_connection();
 //error_reporting(E_ERROR | E_WARNING | E_PARSE);
 //DELETE THE LINE ABOVE TO REVEAL ERRORS WHEN NEEDED
+
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
+
+//remove code aboce to stop showing errors
+
 if (isset($_POST['bio'])) {
     $bio = $_POST['bio'];
     $uID = $_SESSION['uID'];
@@ -69,7 +76,6 @@ if (isset($_POST['bio'])) {
                             $file_tmp = $_FILES['profilepic']['tmp_name'];
                             $file_type = $_FILES['profilepic']['type'];
                             $file_size = $_FILES['profilepic']['size'];
-                            //under this is an error, grab file_size or remove end or figure something out.
                             $file_ext_parts = explode('.', $file_name);
                             $file_ext = strtolower(end($file_ext_parts));
 
@@ -78,8 +84,11 @@ if (isset($_POST['bio'])) {
                             if (in_array($file_ext, $extensions) === false) {
                                 $errors[] = "Extension not allowed, please choose a JPEG, GIF, or PNG file.";
                             }
-                            if ($file_size > 8388608) {
-                                $errors[] = 'File size must be less than 8 MB';
+                            if ($file_ext == "gif" && $file_size > 2097152) {
+                                $errors[] = 'File size must be less than 2 MB for GIF files';
+                            }
+                            if ($file_ext != "gif" && $file_size > 12582912) {
+                                $errors[] = 'File size must be less than 12 MB for JPEG, JPG, or PNG files';
                             }
                             if (empty($errors) == true) {
                                 move_uploaded_file($file_tmp, "images/" . $file_name);
@@ -90,11 +99,15 @@ if (isset($_POST['bio'])) {
                             }
                         }
                     }
+
+
                     echo '<div class="profile-pic1"><img src="images/' . $picture . '" width="57" height="57" /></div>';
                 } else {
                     echo '<div class="profile-pic1"><img src="images/pfp.png" width="57" height="57" /></div>';
                 }
                 ?>
+
+
                 <div class="dropdown-menu">
                     <?php
                     // Check if user is logged in
@@ -130,6 +143,8 @@ if (isset($_POST['bio'])) {
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             $picture = $result['profilepic'];
 
+            $errors = array(); // create an empty errors array
+        
             if (isset($_POST['submit'])) {
                 // handle profilepic upload
                 if (isset($_FILES['profilepic'])) {
@@ -145,9 +160,11 @@ if (isset($_POST['bio'])) {
 
                     if (in_array($file_ext, $extensions) === false) {
                         $errors[] = "Extension not allowed, please choose a JPEG, GIF, or PNG file.";
+
                     }
                     if ($file_size > 8388608) {
                         $errors[] = 'File size must be less than 8 MB';
+
                     }
                     if (empty($errors) == true) {
                         move_uploaded_file($file_tmp, "images/" . $file_name);
@@ -155,11 +172,13 @@ if (isset($_POST['bio'])) {
                         // update user's profile picture in the database
                         $stmt = $db->prepare("UPDATE users SET profilepic = ? WHERE uID = ?");
                         $stmt->execute(array($picture, $_SESSION['uID']));
+
                     }
+
                 }
+
             }
-            //Display logout and edit profile links
-            //echo $picture;
+
             echo "<center <div class='profile-pic'>
                   <img src='images/$picture' alt='Profile Picture' width='200' height='200' onmouseover='this.style.opacity=0.7;' onmouseout='this.style.opacity=1;'>
                   <div class='edit-profile-picture'>
@@ -169,10 +188,11 @@ if (isset($_POST['bio'])) {
                       </form>
                   </div>
               </div> </center></div>";
+
+
         } else {
             // Customer cannot edit profile
             echo "You must login in order to edit your profile.";
-            usleep(30000);
         }
 
         if (isset($_SESSION['uID'])) {
