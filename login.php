@@ -39,9 +39,9 @@ if (isset($_SESSION['uID'])) {
                     <li><a href="sparksocial.php">Public</a></li>
                     <li><a href="friends.php">Friends</a></li>
                     <li style="justify-content: center;"><a href="closefriends.php">Close Friends</a></li>
-                    <li><a href="tos.html">TOS</a></li>
-                    <li><a href="faq.html">FAQ</a></li>
-                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="tos.php">TOS</a></li>
+                    <li><a href="faq.php">FAQ</a></li>
+                    <li><a href="about.php">About Us</a></li>
                 </ul>
             </nav>
         </div>
@@ -72,7 +72,7 @@ if (isset($_SESSION['uID'])) {
 
         <center class="text">
             <div class="line">
-                <h1 class='lineUp'>Login.</h1>
+                <h1 class='lineUp'>Login</h1>
             </div>
 
 

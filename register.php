@@ -75,7 +75,7 @@ if (isset($_SESSION['uID'])) {
 
         <center class="text">
             <div class="line">
-                <h1 class='lineUp'>Register here.</h1>
+                <h1 class='lineUp'>Register here</h1>
             </div>
         </center>
 

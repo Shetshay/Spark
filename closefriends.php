@@ -1,3 +1,18 @@
+<?php
+require_once("config.php");
+$db = get_pdo_connection();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Handle form submission
+    $content = $_POST['cID'];
+    $user_id = $_SESSION['uID'];
+
+    // Insert new post into database
+    $stmt = $db->prepare("INSERT INTO posts (user_id, content) VALUES (?, ?)");
+    $stmt->execute([$uID, $Content]);
+}
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -37,11 +52,20 @@
     <main>
         <div class="wrapper">
             <div class="dropdown">
-                <img src="images/pfp.png" width="57" height="57" />
+                <?php
+                if (isset($_SESSION['uID'])) {
+                    // get user's current profile picture
+                    $stmt = $db->prepare("SELECT profilepic FROM users WHERE uID = ?");
+                    $stmt->execute(array($_SESSION['uID']));
+                    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                    $picture = $result['profilepic'];
+                    echo '<div class="profile-pic1"><img src="images/' . $picture . '" width="57" height="57" /></div>';
+                } else {
+                    echo '<div class="profile-pic1"><img src="images/pfp.png" width="57" height="57" /></div>';
+                }
+                ?>
                 <div class="dropdown-menu">
                     <?php
-                    // Check if user is logged in
-                    session_start();
                     if (isset($_SESSION['uID'])) {
                         // Display logout and edit profile links
                         echo "<a href='logout.php'>Logout</a>";
@@ -75,7 +99,7 @@
 
         <center class="text">
             <div class="line">
-                <h1 class='lineUp'>Close Friends Feed.</h1>
+                <h1 class='lineUp'>Close Friends Feed</h1>
             </div>
         </center>
 
@@ -86,7 +110,7 @@
             
             if (isset($_SESSION['uID'])) {
                 // Display logout and edit profile links
-                echo '<center><div class="container"><a class="button" href="#" style="--color:#6eff3e;">
+                echo '<center><div class="container"><a class="button" href="#" style="--color:#ff1867;">
                         <span></span>
                         <span></span>
                         <span></span>
@@ -99,7 +123,80 @@
                 // Customer cannot post or view posts
                 echo "You must login in order to post.";
             }
+
+
+            // Check if user is logged in
+            if (!isset($_SESSION['uID'])) {
+                // Redirect to login page
+                header("Location: login.php");
+                exit;
+            }
+            echo '<div style="padding-top: 75px;"> </div>';
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                // Get post content from the form
+                $post_content = $_POST['post_content'];
+
+                // Insert post into database
+                $stmt = $db->prepare("INSERT INTO Content (uID, cID) VALUES (?, ?)");
+                $stmt->execute([$_SESSION['uID'], $post_content]);
+
+                // Redirect back to friends page
+                header("Location: friends.php");
+                exit;
+            }
+
             ?>
+
+            <?php
+            $user_id = $_SESSION['uID'];
+            echo $_SESSION['uID'];
+            // Retrieve posts from the database
+            $stmt = $db->prepare("SELECT cID, level, datecreated, text, Media, username FROM Content NATURAL JOIN users NATURAL JOIN Canfriend WHERE level = 20 & $user_id = Canfriend.uID1 & Content.uID = Canfriend.uID2 & isfriend = 1 ORDER BY datecreated DESC");
+            $stmt->execute();
+            $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            ?>
+
+            <div class="posts">
+                <?php foreach ($posts as $post): ?>
+                    <div class="post">
+                        <p>
+                            <?= $post['text'] ?>
+                        </p>
+
+                        <p>Posted by
+                            <?= $post['username'] ?>
+                        </p>
+
+                        <?php if (isset($_SESSION['uID'])): ?>
+                            <form method="post" action="create_comment.php">
+                                <input type="hidden" name="post_id" value="<?= $post['cID'] ?>">
+                                <textarea name="comment_content" placeholder="Add a comment"></textarea>
+                                <button type="submit">Comment</button>
+                            </form>
+                        <?php endif; ?>
+
+                        <?php
+                        // Retrieve comments for the post from the database
+                        $stmt = $db->prepare("SELECT * FROM Content WHERE cID = ? ORDER BY created_at DESC");
+                        $stmt->execute([$post['cID']]);
+                        $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        ?>
+
+                        <div class="comments">
+                            <?php foreach ($comments as $comment): ?>
+                                <div class="comment">
+                                    <p>
+                                        <?= $comment['cID'] ?>
+                                    </p>
+                                    <p>Commented by
+                                        <?= $comment['uID'] ?>
+                                    </p>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
 
         </center>
 

@@ -117,7 +117,7 @@ if (isset($_POST['bio'])) {
 
         <center class="text">
             <div class="line">
-                <h1 class='lineUp'>Edit profile.</h1>
+                <h1 class='lineUp'>Edit profile</h1>
             </div>
         </center>
         <?php

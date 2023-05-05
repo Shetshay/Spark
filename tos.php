@@ -1,3 +1,9 @@
+<?php
+require_once("config.php");
+$db = get_pdo_connection();
+?>
+
+
 <!DOCTYPE html>
 <html>
 
@@ -37,11 +43,21 @@
     <main>
         <div class="wrapper">
             <div class="dropdown">
-                <img src="images/pfp.png" width="57" height="57" />
+                <?php
+                if (isset($_SESSION['uID'])) {
+                    // get user's current profile picture
+                    $stmt = $db->prepare("SELECT profilepic FROM users WHERE uID = ?");
+                    $stmt->execute(array($_SESSION['uID']));
+                    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                    $picture = $result['profilepic'];
+                    echo '<div class="profile-pic1"><img src="images/' . $picture . '" width="57" height="57" /></div>';
+                } else {
+                    echo '<div class="profile-pic1"><img src="images/pfp.png" width="57" height="57" /></div>';
+                }
+                ?>
                 <div class="dropdown-menu">
                     <?php
                     // Check if user is logged in
-                    session_start();
                     if (isset($_SESSION['uID'])) {
                         // Display logout and edit profile links
                         echo "<a href='logout.php'>Logout</a>";

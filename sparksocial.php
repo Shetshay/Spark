@@ -42,11 +42,21 @@ $db = get_pdo_connection();
     <main>
         <div class="wrapper">
             <div class="dropdown">
-                <img src="images/pfp.png" width="57" height="57" />
+                <?php
+                if (isset($_SESSION['uID'])) {
+                    // get user's current profile picture
+                    $stmt = $db->prepare("SELECT profilepic FROM users WHERE uID = ?");
+                    $stmt->execute(array($_SESSION['uID']));
+                    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                    $picture = $result['profilepic'];
+                    echo '<div class="profile-pic1"><img src="images/' . $picture . '" width="57" height="57" /></div>';
+                } else {
+                    echo '<div class="profile-pic1"><img src="images/pfp.png" width="57" height="57" /></div>';
+                }
+                ?>
                 <div class="dropdown-menu">
                     <?php
                     // Check if user is logged in
-                    // session_start();
                     
                     if (isset($_SESSION['uID'])) {
                         // Display logout and edit profile links
@@ -81,7 +91,7 @@ $db = get_pdo_connection();
 
         <center class="text">
             <div class="line">
-                <h1 class='lineUp'>Public Feed.</h1>
+                <h1 class='lineUp'>Public Feed</h1>
             </div>
         </center>
 
@@ -97,9 +107,13 @@ $db = get_pdo_connection();
 
                 // Customer cannot post or view posts
                 echo "You must login in order to post.";
+
             }
             ?>
-
+            <div class="tn-box tn-box-color-1">
+                <p>a;ldfkjds;fakjfsd;fjdsfjsdlfkfjds!</p>
+                <div class="tn-progress"></div>
+            </div>
         </center>
 
 
