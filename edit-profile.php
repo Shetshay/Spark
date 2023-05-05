@@ -45,9 +45,15 @@ $db = get_pdo_connection();
 
                 <?php
                 if (isset($_SESSION['uID'])) {
-                    echo '<img src="images/$picture" width="57" height="57" />';
+                    $stmt = $db->prepare("SELECT profilepic FROM users WHERE uID = ?");
+                    $stmt->execute([$_SESSION['uID']]);
+                    $row = $stmt->fetch();
+                    $picture = $row['profilepic'];
+
+
+                    echo '<div class="profile-pic"><img src="images/' . $picture . '" width="57" height="57" /></div>';
                 } else {
-                    echo '<img src="images/pfp.png" width="57" height="57" />';
+                    echo '<div class="profile-pic"><img src="images/pfp.png" width="57" height="57" /></div>';
                 }
                 ?>
 
@@ -103,11 +109,9 @@ $db = get_pdo_connection();
                     if (in_array($file_ext, $extensions) === false) {
                         $errors[] = "Extension not allowed, please choose a JPEG, GIF, or PNG file.";
                     }
-
                     if ($file_size > 8388608) {
                         $errors[] = 'File size must be less than 8 MB';
                     }
-
                     if (empty($errors) == true) {
                         move_uploaded_file($file_tmp, "images/" . $file_name);
                         $picture = $file_name;
@@ -120,15 +124,15 @@ $db = get_pdo_connection();
 
             //Display logout and edit profile links
             //echo $picture;
-            echo "<center <div class='profile-picture'>
+            echo "<center <div class='profile-pic'>
                   <img src='images/$picture' alt='Profile Picture' width='200' height='200' onmouseover='this.style.opacity=0.7;' onmouseout='this.style.opacity=1;'>
                   <div class='edit-profile-picture'>
                       <form method='post' enctype='multipart/form-data'>
                           <input type='file' name='profilepic' accept='image/*'>
-                          <input type='submit' name='submit' value='Save'>
+                          <input type='submit' name='submit' value='Upload'>
                       </form>
                   </div>
-              </div> </center>";
+              </div> </center></div>";
 
 
 

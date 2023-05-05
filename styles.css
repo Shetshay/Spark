@@ -7,6 +7,48 @@
   -ms-user-select: none;
   user-select: none;
 } */
+input::file-selector-button {
+  background-image: linear-gradient(to right,
+      #ff7a18,
+      #af002d,
+      #319197 100%,
+      #319197 200%);
+  background-position-x: 0%;
+  background-size: 200%;
+  border: 0;
+  border-radius: 30px;
+  color: #fff;
+  padding: 1rem 1.25rem;
+  text-shadow: 0 1px 1px #333;
+  transition: all 0.25s;
+}
+
+input::file-selector-button:hover {
+  background-position-x: 50%;
+  /* transform: scale(1.1); */
+}
+
+input[type=submit] {
+  background-image: linear-gradient(to right,
+      #ff7a18,
+      #af002d,
+      #319197 100%,
+      #319197 200%);
+  background-position-x: 0%;
+  background-size: 200%;
+  border: 0;
+  border-radius: 30px;
+  color: #fff;
+  padding: 1rem 1.25rem;
+  text-shadow: 0 1px 1px #333;
+  transition: all 0.25s;
+}
+
+input[type=submit]:hover {
+  background-position-x: 80%;
+}
+
+
 
 hr {
   transition-timing-function: ease;
@@ -18,6 +60,10 @@ hr {
 
   animation: transitionIn 0.75s;
 
+}
+
+.profile-pic img {
+  border-radius: 50%;
 }
 
 body {
