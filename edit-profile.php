@@ -1,7 +1,18 @@
 <?php
 require_once("config.php");
 $db = get_pdo_connection();
+error_reporting(E_ERROR | E_WARNING | E_PARSE);
+//DELETE THE LINE ABOVE TO REVEAL ERRORS WHEN NEEDED
+if (isset($_POST['bio'])) {
+    $bio = $_POST['bio'];
+    $uID = $_SESSION['uID'];
 
+    $stmt = $db->prepare("UPDATE users SET bio = :bio WHERE uID = :uID");
+    $stmt->bindParam(":bio", $bio);
+    $stmt->bindParam(":uID", $uID);
+    $stmt->execute();
+
+}
 ?>
 
 <!DOCTYPE html>
@@ -30,9 +41,9 @@ $db = get_pdo_connection();
                     <li><a href="sparksocial.php">Public</a></li>
                     <li><a href="friends.php">Friends</a></li>
                     <li style="justify-content: center;"><a href="closefriends.php">Close Friends</a></li>
-                    <li><a href="tos.html">TOS</a></li>
-                    <li><a href="faq.html">FAQ</a></li>
-                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="tos.php">TOS</a></li>
+                    <li><a href="faq.php">FAQ</a></li>
+                    <li><a href="about.php">About Us</a></li>
                 </ul>
             </nav>
         </div>
@@ -45,19 +56,44 @@ $db = get_pdo_connection();
 
                 <?php
                 if (isset($_SESSION['uID'])) {
+                    // get user's current profile picture
                     $stmt = $db->prepare("SELECT profilepic FROM users WHERE uID = ?");
-                    $stmt->execute([$_SESSION['uID']]);
-                    $row = $stmt->fetch();
-                    $picture = $row['profilepic'];
+                    $stmt->execute(array($_SESSION['uID']));
+                    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                    $picture = $result['profilepic'];
 
+                    if (isset($_POST['submit'])) {
+                        // handle profilepic upload
+                        if (isset($_FILES['profilepic'])) {
+                            $file_name = $_FILES['profilepic']['name'];
+                            $file_tmp = $_FILES['profilepic']['tmp_name'];
+                            $file_type = $_FILES['profilepic']['type'];
+                            $file_size = $_FILES['profilepic']['size'];
+                            //under this is an error, grab file_size or remove end or figure something out.
+                            $file_ext = strtolower(end(explode('.', $file_name)));
 
+                            $extensions = array("jpeg", "jpg", "png", "gif");
+
+                            if (in_array($file_ext, $extensions) === false) {
+                                $errors[] = "Extension not allowed, please choose a JPEG, GIF, or PNG file.";
+                            }
+                            if ($file_size > 8388608) {
+                                $errors[] = 'File size must be less than 8 MB';
+                            }
+                            if (empty($errors) == true) {
+                                move_uploaded_file($file_tmp, "images/" . $file_name);
+                                $picture = $file_name;
+                                // update user's profile picture in the database
+                                $stmt = $db->prepare("UPDATE users SET profilepic = ? WHERE uID = ?");
+                                $stmt->execute(array($picture, $_SESSION['uID']));
+                            }
+                        }
+                    }
                     echo '<div class="profile-pic"><img src="images/' . $picture . '" width="57" height="57" /></div>';
                 } else {
                     echo '<div class="profile-pic"><img src="images/pfp.png" width="57" height="57" /></div>';
                 }
                 ?>
-
-                <!--\ <img src="images/pfp.png" width="57" height="57" /> -->
                 <div class="dropdown-menu">
                     <?php
                     // Check if user is logged in
@@ -83,7 +119,6 @@ $db = get_pdo_connection();
                 <h1 class='lineUp'>Edit profile.</h1>
             </div>
         </center>
-
         <?php
 
 
@@ -121,7 +156,6 @@ $db = get_pdo_connection();
                     }
                 }
             }
-
             //Display logout and edit profile links
             //echo $picture;
             echo "<center <div class='profile-pic'>
@@ -133,14 +167,25 @@ $db = get_pdo_connection();
                       </form>
                   </div>
               </div> </center></div>";
-
-
-
         } else {
             // Customer cannot edit profile
             echo "You must login in order to edit your profile.";
             usleep(30000);
         }
+        if (isset($_SESSION['uID'])) {
+            $stmt = $db->prepare("SELECT bio FROM users WHERE uID = ?");
+            $stmt->execute([$_SESSION['uID']]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $bio = $row['bio'];
+
+            if ($bio === null) {
+                echo "No bio, yet!";
+            } else {
+                echo $bio;
+            }
+        }
+
+
         ?>
 
 
