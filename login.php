@@ -78,11 +78,13 @@ if (isset($_SESSION['uID'])) {
 
             <form action="login.php" method="POST">
                 <div class="container">
-                    <label for="email"><b>Email</b></label>
-                    <input type="text" placeholder="Enter Email" name="email" required>
+                    <label for="email"><b></b></label>
+                    <input style="justify-content: center; flex-direction: column; display: flex;" type="text"
+                        placeholder="Enter Email" name="email" required>
 
-                    <label for="password"><b>Password</b></label>
-                    <input type="password" placeholder="Enter Password" name="Password" required>
+                    <label for="password"><b></b></label>
+                    <input style="justify-content: center; flex-direction: column; display: flex;" type="password"
+                        placeholder="Enter Password" name="Password" required>
 
                     <?php
                     if (isset($error_message)) {

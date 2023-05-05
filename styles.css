@@ -21,6 +21,7 @@ input::file-selector-button {
   padding: 1rem 1.25rem;
   text-shadow: 0 1px 1px #333;
   transition: all 0.25s;
+  cursor: pointer;
 }
 
 input::file-selector-button:hover {
@@ -42,11 +43,86 @@ input[type=submit] {
   padding: 1rem 1.25rem;
   text-shadow: 0 1px 1px #333;
   transition: all 0.25s;
+  margin-top: 40px;
+  cursor: pointer;
 }
 
 input[type=submit]:hover {
   background-position-x: 80%;
 }
+
+button[type=submit] {
+  background-image: linear-gradient(to right,
+      #15d856,
+      #005a30,
+      #003513 100%,
+      #001107 200%);
+  background-position-x: 0%;
+  background-size: 200%;
+  border: 0;
+  border-radius: 30px;
+  color: #fff;
+  padding: 1rem 1.25rem;
+  text-shadow: 0 1px 1px #333;
+  transition: all 0.25s;
+  margin-top: 40px;
+  cursor: pointer;
+}
+
+button[type=submit]:hover {
+  background-position-x: 80%;
+}
+
+
+input[type=text] {
+  background-image: linear-gradient(to right,
+      #ff7a18,
+      #af002d,
+      #319197 100%,
+      #319197 200%);
+  background-position-x: 0%;
+  background-position-y: 0%;
+  background-size: 200%;
+  border: 0;
+  border-radius: 30px;
+  color: #fff;
+  padding: 1rem 1.25rem;
+  text-shadow: 0 1px 1px #333;
+  transition: all 0.25s;
+  margin-top: 40px;
+}
+
+input[type=text]:hover {
+  background-position-x: 80%;
+  background-position-y: 60%;
+}
+
+input[type=password] {
+  background-image: linear-gradient(to right,
+      rgb(11, 144, 18),
+      #05391e,
+      #97315d 100%,
+      #97317f 200%);
+  background-position-x: 0%;
+  background-position-y: 0%;
+  background-size: 200%;
+  border: 0;
+  border-radius: 30px;
+  color: #ffffff;
+  padding: 1rem 1.25rem;
+  text-shadow: 0 1px 1px #000000;
+  transition: all 0.25s;
+  margin-top: 40px;
+}
+
+input[type=password]:hover {
+  background-position-x: 80%;
+  background-position-y: 60%;
+}
+
+
+
+
 
 
 
@@ -62,9 +138,79 @@ hr {
 
 }
 
-.profile-pic img {
+.profile-pic1 img {
   border-radius: 50%;
 }
+
+
+
+.profile-pic img {
+  border-radius: 50%;
+  vertical-align: middle;
+  text-align: center;
+  color: transparent;
+  transition: all .3s ease;
+
+
+}
+
+/* 
+got this from here!
+https://gist.github.com/ayoungh/4276512 */
+
+
+textarea {
+  margin-top: 10px;
+  width: 300px;
+  height: 100px;
+  -moz-border-bottom-colors: none;
+  -moz-border-left-colors: none;
+  -moz-border-right-colors: none;
+  -moz-border-top-colors: none;
+  background: none repeat scroll 0 0 rgb(255, 115, 0);
+  border-color: -moz-use-text-color #FFFFFF #FFFFFF -moz-use-text-color;
+  border-image: none;
+  border-radius: 6px 6px 6px 6px;
+  border-style: none solid solid none;
+  border-width: medium 1px 1px medium;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12) inset;
+  color: #ffffff;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 1em;
+  line-height: 1.4em;
+  padding: 5px 8px;
+  transition: background-color 0.2s ease 0s;
+  resize: none;
+}
+
+
+textarea:focus {
+  background: none repeat scroll 0 0 #FFFFFF;
+  outline-width: 0;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 body {
   margin: 0;
@@ -523,6 +669,24 @@ a {
     font-size: 1em;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

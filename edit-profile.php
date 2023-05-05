@@ -1,7 +1,7 @@
 <?php
 require_once("config.php");
 $db = get_pdo_connection();
-error_reporting(E_ERROR | E_WARNING | E_PARSE);
+//error_reporting(E_ERROR | E_WARNING | E_PARSE);
 //DELETE THE LINE ABOVE TO REVEAL ERRORS WHEN NEEDED
 if (isset($_POST['bio'])) {
     $bio = $_POST['bio'];
@@ -50,7 +50,7 @@ if (isset($_POST['bio'])) {
     </header>
 
 
-    <main>
+    <main style="padding-bottom: 400px;">
         <div class="wrapper">
             <div class="dropdown">
 
@@ -70,7 +70,8 @@ if (isset($_POST['bio'])) {
                             $file_type = $_FILES['profilepic']['type'];
                             $file_size = $_FILES['profilepic']['size'];
                             //under this is an error, grab file_size or remove end or figure something out.
-                            $file_ext = strtolower(end(explode('.', $file_name)));
+                            $file_ext_parts = explode('.', $file_name);
+                            $file_ext = strtolower(end($file_ext_parts));
 
                             $extensions = array("jpeg", "jpg", "png", "gif");
 
@@ -89,9 +90,9 @@ if (isset($_POST['bio'])) {
                             }
                         }
                     }
-                    echo '<div class="profile-pic"><img src="images/' . $picture . '" width="57" height="57" /></div>';
+                    echo '<div class="profile-pic1"><img src="images/' . $picture . '" width="57" height="57" /></div>';
                 } else {
-                    echo '<div class="profile-pic"><img src="images/pfp.png" width="57" height="57" /></div>';
+                    echo '<div class="profile-pic1"><img src="images/pfp.png" width="57" height="57" /></div>';
                 }
                 ?>
                 <div class="dropdown-menu">
@@ -137,7 +138,8 @@ if (isset($_POST['bio'])) {
                     $file_type = $_FILES['profilepic']['type'];
                     $file_size = $_FILES['profilepic']['size'];
                     //under this is an error, grab file_size or remove end or figure something out.
-                    $file_ext = strtolower(end(explode('.', $file_name)));
+                    $file_ext_parts = explode('.', $file_name);
+                    $file_ext = strtolower(end($file_ext_parts));
 
                     $extensions = array("jpeg", "jpg", "png", "gif");
 
@@ -172,6 +174,7 @@ if (isset($_POST['bio'])) {
             echo "You must login in order to edit your profile.";
             usleep(30000);
         }
+
         if (isset($_SESSION['uID'])) {
             $stmt = $db->prepare("SELECT bio FROM users WHERE uID = ?");
             $stmt->execute([$_SESSION['uID']]);
@@ -179,11 +182,130 @@ if (isset($_POST['bio'])) {
             $bio = $row['bio'];
 
             if ($bio === null) {
-                echo "No bio, yet!";
+                echo "<center>No bio, yet!</center>";
             } else {
-                echo $bio;
+                echo "<center style='padding-top: 45px;'>Current Bio: " . $bio . "</center>";
+            }
+
+            echo "<center><form method='post'>";
+            echo "<textarea name='newBio' rows='5' cols='50'>" . $bio . "</textarea>";
+            echo "<br><input type='submit' name='updateBio' value='Update Bio'>";
+            echo "</form></center>";
+
+            if (isset($_POST['updateBio'])) {
+                $newBio = $_POST['newBio'];
+                $stmt = $db->prepare("UPDATE users SET bio = ? WHERE uID = ?");
+                $stmt->execute([$newBio, $_SESSION['uID']]);
+                header("Location: edit-profile.php");
             }
         }
+        if (isset($_SESSION['uID'])) {
+            $stmt = $db->prepare("SELECT email FROM users WHERE uID = ?");
+            $stmt->execute([$_SESSION['uID']]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $email = $row['email'];
+
+            if ($email === null) {
+                echo "<center>No email, yet!</center>";
+            } else {
+                echo "<center style='padding-top: 45px;'>Current Email: " . $email . "</center>";
+                echo "<center><form method='post'>";
+                echo "<input type='text' name='newEmail' placeholder='New Email'>";
+                echo "<br><input type='submit' name='updateEmail' value='Update Email'>";
+                echo "</form></center>";
+
+                if (isset($_POST['updateEmail'])) {
+                    $newEmail = $_POST['newEmail'];
+
+                    // Validate email format
+                    if (!filter_var($newEmail, FILTER_VALIDATE_EMAIL)) {
+                        echo "<center>Invalid email address.</center>";
+                    } else {
+                        $stmt = $db->prepare("UPDATE users SET email = ? WHERE uID = ?");
+                        $stmt->execute([$newEmail, $_SESSION['uID']]);
+                        echo "<center>Email updated successfully!</center>";
+                        $email = $newEmail;
+                        header("Location: edit-profile.php");
+                    }
+                }
+            }
+        }
+        if (isset($_SESSION['uID'])) {
+            $stmt = $db->prepare("SELECT username FROM users WHERE uID = ?");
+            $stmt->execute([$_SESSION['uID']]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $username = $row['username'];
+
+            if ($username === null) {
+                echo "<center>No username, yet!</center>";
+            } else {
+                echo "<center style='padding-top: 45px;'>Current Username: " . $username . "</center>";
+                echo "<center><form method='post'>";
+                echo "<input type='text' name='newUsername' placeholder='New Username'>";
+                echo "<br><input type='submit' name='updateUsername' value='Update Username'>";
+                echo "</form></center>";
+
+                if (isset($_POST['updateUsername'])) {
+                    $newUsername = $_POST['newUsername'];
+                    // Add validation here to check if $newUsername is not empty, is unique, etc.
+        
+                    $stmt = $db->prepare("UPDATE users SET username = ? WHERE uID = ?");
+                    $stmt->execute([$newUsername, $_SESSION['uID']]);
+                    $username = $newUsername; // Update the username variable with the new value
+                    echo "<center>Username updated successfully!</center>";
+                    header("Location: edit-profile.php");
+                }
+            }
+        }
+        if (isset($_SESSION['uID'])) {
+            $stmt = $db->prepare("SELECT password FROM users WHERE uID = ?");
+            $stmt->execute([$_SESSION['uID']]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $password = $row['password'];
+
+            if ($password === null) {
+                echo "<center>No password, yet!</center>";
+            } else {
+                echo "<center style='padding-top: 45px;'>Update Password:</center>";
+                echo "<center><form method='post'>";
+                echo "<input type='password' name='currentPassword' placeholder='Current Password'>";
+                echo "<br><input type='password' name='newPassword' placeholder='New Password'>";
+                echo "<br><input type='password' name='confirmNewPassword' placeholder='Confirm New Password'>";
+                echo "<br><input type='submit' name='updatePassword' value='Update Password'>";
+                echo "</form></center>";
+
+                if (isset($_POST['updatePassword'])) {
+                    $currentPassword = $_POST['currentPassword'];
+                    $newPassword = $_POST['newPassword'];
+                    $confirmNewPassword = $_POST['confirmNewPassword'];
+
+                    // Check if the current password is correct
+                    if (password_verify($currentPassword, $password)) {
+                        // Check if the new password meets the requirements
+                        if (strlen($newPassword) >= 8 && preg_match('/[A-Za-z]/', $newPassword) && preg_match('/\d/', $newPassword)) {
+                            // Check if the new password and confirm new password match
+                            if ($newPassword === $confirmNewPassword) {
+                                // Update the user's password in the database
+                                $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+                                $stmt = $db->prepare("UPDATE users SET password = ? WHERE uID = ?");
+                                $stmt->execute([$hashedPassword, $_SESSION['uID']]);
+                                echo "<center>Password updated successfully!</center>";
+                                $password = $hashedPassword; // Update the local variable with the new hashed password
+                            } else {
+                                echo "<center style='color: red;'>New password and confirm new password do not match.</center>";
+                            }
+                        } else {
+                            echo "<center style='color: red;'>New password must be at least 8 characters long and contain at least one number.</center>";
+                        }
+                    } else {
+                        echo "<center style='color: red;'>Current password is incorrect.</center>";
+                    }
+                }
+            }
+        }
+
+
+
 
 
         ?>
