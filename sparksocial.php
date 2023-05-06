@@ -1,6 +1,16 @@
 <?php
 require_once("config.php");
 $db = get_pdo_connection();
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Handle form submission
+    $content = $_POST['cID'];
+    $user_id = $_SESSION['uID'];
+
+    // Insert new post into database
+    $stmt = $db->prepare("INSERT INTO posts (user_id, content) VALUES (?, ?)");
+    $stmt->execute([$uID, $Content]);
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -110,42 +120,63 @@ $db = get_pdo_connection();
 
             }
             ?>
-            <div class="tn-box tn-box-color-1">
-                <p>a;ldfkjds;fakjfsd;fjdsfjsdlfkfjds!</p>
-                <div class="tn-progress"></div>
-            </div>
+
+
+
+
         </center>
+        <center>
+            <?php
+            // Retrieve posts from the database
+            $stmt = $db->prepare("SELECT * FROM UserwithContent ORDER BY datecreated DESC;");
+            $stmt->execute();
+            $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            ?>
 
+            <div class="posts">
+                <?php foreach ($posts as $post): ?>
+                    <div class="post">
+                        <p>
+                            <?= $post['text'] ?>
+                        </p>
 
-        <!-- <center>
+                        <p>Posted by
+                            <?= $post['username'] ?>
+                        </p>
 
-            <div class="container">
-                <a class="button" href="#" style="--color:#1e9bff;">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    Post
-                </a>
+                        <?php if (isset($_SESSION['uID'])): ?>
+                            <form method="post" action="create_comment.php">
+                                <input type="hidden" name="post_id" value="<?= $post['cID'] ?>">
+                                <textarea name="comment_content" placeholder="Add a comment"></textarea>
+                                <button type="submit">Comment</button>
+                            </form>
+                        <?php endif; ?>
 
-        </center> -->
-        <!-- 
-        <a class="button" href="#" style="--color: #ff1867;">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            Post
-        </a>
-        <a class="button" href="#" style="--color: #6eff3e;">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            Post
-        </a>
-        </div>
- -->
+                        <?php
+                        // Retrieve comments for the post from the database
+                        $stmt = $db->prepare("SELECT * FROM Content WHERE cID = ? ORDER BY created_at DESC");
+                        $stmt->execute([$post['cID']]);
+                        $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        ?>
+
+                        <div class="comments">
+                            <?php foreach ($comments as $comment): ?>
+                                <div class="comment">
+                                    <p>
+                                        <?= $comment['cID'] ?>
+                                    </p>
+                                    <p>Commented by
+                                        <?= $comment['uID'] ?>
+                                    </p>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endforeach;
+                ?>
+            </div>
+
+        </center>
 
     </main>
 </body>

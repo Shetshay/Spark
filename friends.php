@@ -121,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo '<div style="padding-top: 75px;"> </div>';
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Get post content from the form
-                $post_content = $_POST['post_content'];
+                $post_content = $_POST['cID'];
 
                 // Insert post into database
                 $stmt = $db->prepare("INSERT INTO Content (uID, cID) VALUES (?, ?)");
@@ -138,7 +138,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user_id = $_SESSION['uID'];
             echo $_SESSION['uID'];
             // Retrieve posts from the database
-            $stmt = $db->prepare("SELECT cID, level, datecreated, text, Media, username FROM Content NATURAL JOIN users NATURAL JOIN Canfriend WHERE level = 20 & $user_id = Canfriend.uID1 & Content.uID = Canfriend.uID2 & isfriend = 1 ORDER BY datecreated DESC");
+            
+            $stmt = $db->prepare("SELECT * FROM Content NATURAL JOIN users NATURAL JOIN
+(
+    SELECT uID2 as uID
+    FROM Canfriend
+    WHERE uID1 = $user_id
+
+    UNION
+    SELECT uID1 as uID
+    FROM Canfriend
+    WHERE uID2 = $user_id
+) as fc
+WHERE level = '20';");
             $stmt->execute();
             $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
             ?>
