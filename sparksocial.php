@@ -147,8 +147,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="card-container">
                             <div class="card-header">
                                 <div class="img-avatar">
-                                    <img style="width: 50px;height: 50px;" src="images/<?= $post['profilepic'] ?>"
-                                        alt="profile picture">
+                                    <img style="width: 50px;height: 50px; border-radius: 50%; margin-right: 14px;"
+                                        src="images/<?= $post['profilepic'] ?>" alt="profile picture">
                                 </div>
                                 <div class="text-chat">
                                     <p>Posted by
