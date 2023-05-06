@@ -113,6 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (isset($_SESSION['uID'])) {
                 // Display logout and edit profile links
                 echo '<button class="glowing-btn"><span class="glowing-txt">P<span class="faulty-letter">O</span>ST</span></button>';
+                echo '<div style = "padding-bottom: 100px;"></div>';
             } else {
 
                 // Customer cannot post or view posts
@@ -128,36 +129,75 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <center>
             <?php
             // Retrieve posts from the database
-            $stmt = $db->prepare("SELECT * FROM UserwithContent ORDER BY datecreated DESC;");
+            $stmt = $db->prepare("SELECT c.text, u.username, u.profilepic 
+            FROM Content c 
+            INNER JOIN users u ON c.uID = u.uID 
+            ORDER BY c.datecreated DESC
+            ");
             $stmt->execute();
             $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
             ?>
+
 
             <div class="posts">
                 <?php foreach ($posts as $post): ?>
                     <div class="post">
-                        <p>
-                            <?= $post['text'] ?>
-                        </p>
 
-                        <p>Posted by
-                            <?= $post['username'] ?>
-                        </p>
+                        <div class="card-container">
+                            <div class="card-header">
+                                <div class="img-avatar">
+                                    <img style="width: 50px;height: 50px;" src="images/<?= $post['profilepic'] ?>"
+                                        alt="profile picture">
+                                </div>
+                                <div class="text-chat">
+                                    <p>Posted by
+                                        <?= $post['username'] ?>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="messages-container">
+                                    <div class="message-box left">
+                                        <p>
+                                            <?= $post['text'] ?>
+                                        </p>
+                                    </div>
+                                    <div class="message-box right">
+                                        <p>Test</p>
+                                    </div>
+                                </div>
+
+
+                                <div class="message-input">
+                                    <form>
+                                        <textarea type="" class="message-send"
+                                            placeholder="Type your message here"></textarea>
+                                        <button type="" class="button-send">Comment</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
 
                         <?php if (isset($_SESSION['uID'])): ?>
                             <form method="post" action="create_comment.php">
+                                <!-- not implemented yet -->
                                 <input type="hidden" name="post_id" value="<?= $post['cID'] ?>">
                                 <textarea name="comment_content" placeholder="Add a comment"></textarea>
                                 <button type="submit">Comment</button>
                             </form>
                         <?php endif; ?>
 
-                        <?php
+                        <!-- <?php
                         // Retrieve comments for the post from the database
                         $stmt = $db->prepare("SELECT * FROM Content WHERE cID = ? ORDER BY created_at DESC");
                         $stmt->execute([$post['cID']]);
                         $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                        ?>
+                        ?> -->
 
                         <div class="comments">
                             <?php foreach ($comments as $comment): ?>

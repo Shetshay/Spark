@@ -208,7 +208,7 @@ if (isset($_POST['bio'])) {
             }
 
             echo "<center><form method='post'>";
-            echo "<textarea name='newBio' rows='5' cols='50'>" . $bio . "</textarea>";
+            echo "<textarea class = 'textareacomment'name='newBio' rows='5' cols='50'>" . $bio . "</textarea>";
             echo "<br><input type='submit' name='updateBio' value='Update Bio'>";
             echo "</form></center>";
 
