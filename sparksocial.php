@@ -129,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <center>
             <?php
             // Retrieve posts from the database
-            $stmt = $db->prepare("SELECT c.text, u.username, u.profilepic 
+            $stmt = $db->prepare("SELECT c.text, u.username, u.profilepic, c.datecreated
             FROM Content c 
             INNER JOIN users u ON c.uID = u.uID 
             ORDER BY c.datecreated DESC
@@ -145,37 +145,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="post">
 
                         <div class="card-container">
+                            <div class="post-date" style="text-align:center; color:#555;">
+                                <?= $post['datecreated'] ?>
+                            </div>
                             <div class="card-header">
                                 <div class="img-avatar">
                                     <img style="width: 50px;height: 50px; border-radius: 50%; margin-right: 14px;"
                                         src="images/<?= $post['profilepic'] ?>" alt="profile picture">
                                 </div>
+
                                 <div class="text-chat">
                                     <p>Posted by
                                         <?= $post['username'] ?>
                                     </p>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="messages-container">
                                     <div class="message-box left">
                                         <p>
                                             <?= $post['text'] ?>
                                         </p>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="messages-container">
                                     <div class="message-box right">
-                                        <p>Test</p>
+                                        <p>Test comment.</p>
                                     </div>
                                 </div>
 
 
-                                <div class="message-input">
-                                    <form>
-                                        <textarea type="" class="message-send"
-                                            placeholder="Type your message here"></textarea>
-                                        <button type="" class="button-send">Comment</button>
-                                    </form>
-                                </div>
+
+
+                                <?php if (isset($_SESSION['uID'])): ?>
+                                    <div class="message-input">
+                                        <form method="post" action="create_comment.php">
+                                            <input type="hidden" name="post_id" value="<?= $post['cID'] ?>">
+                                            <textarea name="comment_content" type="" class="message-send"
+                                                placeholder="Type your message here"></textarea>
+                                            <button type="" class="button-send">Comment</button>
+                                        </form>
+                                    </div>
+                                <?php endif; ?>
+
+
+
                             </div>
                         </div>
 
@@ -183,14 +195,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-                        <?php if (isset($_SESSION['uID'])): ?>
-                            <form method="post" action="create_comment.php">
-                                <!-- not implemented yet -->
-                                <input type="hidden" name="post_id" value="<?= $post['cID'] ?>">
-                                <textarea name="comment_content" placeholder="Add a comment"></textarea>
-                                <button type="submit">Comment</button>
-                            </form>
-                        <?php endif; ?>
+
 
                         <!-- <?php
                         // Retrieve comments for the post from the database
