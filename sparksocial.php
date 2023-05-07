@@ -75,6 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         echo "<a href='inbox.php'>Inbox</a>";
                         echo "<a href='addfriends.php'>Add Friend</a>";
                         echo "<a href='directmessages.php'>Direct Messages</a>";
+                        echo "<a href='post.php'>Create Post</a>";
                     } else {
                         // Display register and login links
                         echo "<a href='register.php'>Register</a>";
@@ -95,20 +96,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </center>
 
-        <center style="padding-top: 75px;">
+        <center>
 
             <?php
             // Check if user is logged in
             
             if (isset($_SESSION['uID'])) {
                 // Display logout and edit profile links
-                echo '<button class="glowing-btn"><span class="glowing-txt">P<span class="faulty-letter">O</span>ST</span></button>';
-                echo '<div style = "padding-bottom: 100px;"></div>';
+                echo '<a href="post.php"><button class="buttonpost">Post now</button></a>';
+                echo '<div style="padding-bottom: 100px;"></div>';
             } else {
-
-                // Customer cannot post or view posts
-                echo "You must login in order to post.";
-
+                // Display login/signup prompt
+                // header("Location: login.php");
+                // exit;
+                echo "You need to be logged in to post.";
             }
             ?>
 
@@ -116,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
         </center>
-        <center>
+        <center style="padding-bottom: 100px;">
             <?php
             // Retrieve posts from the database
             $stmt = $db->prepare("SELECT c.text, u.username, u.profilepic, c.datecreated

@@ -115,6 +115,10 @@ if (isset($_POST['bio'])) {
                         // Display logout and edit profile links
                         echo "<a href='logout.php'>Logout</a>";
                         echo "<a href='edit-profile.php'>Edit Profile</a>";
+                        echo "<a href='inbox.php'>Inbox</a>";
+                        echo "<a href='addfriends.php'>Add Friend</a>";
+                        echo "<a href='directmessages.php'>Direct Messages</a>";
+                        echo "<a href='post.php'>Create Post</a>";
                     } else {
                         // Display register and login links
                         echo "<a href='register.php'>Register</a>";
