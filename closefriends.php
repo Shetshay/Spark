@@ -138,6 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user_id = $_SESSION['uID'];
             //echo $_SESSION['uID'];
             // Retrieve posts from the database
+            //AARON WAS HERE 5-6
             $stmt = $db->prepare("SELECT * FROM Content NATURAL JOIN users NATURAL JOIN
             (
                 SELECT uID2 as uID
