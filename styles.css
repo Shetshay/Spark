@@ -205,6 +205,8 @@ input[type=submit] {
   cursor: pointer;
 }
 
+
+
 input[type=submit]:hover {
   background-position-x: 80%;
 }

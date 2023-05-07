@@ -75,6 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         echo "<a href='inbox.php'>Inbox</a>";
                         echo "<a href='addfriends.php'>Add Friend</a>";
                         echo "<a href='directmessages.php'>Direct Messages</a>";
+                        echo "<a href='post.php'>Create Post</a>";
                     } else {
                         // Display register and login links
                         echo "<a href='register.php'>Register</a>";

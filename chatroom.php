@@ -1,16 +1,24 @@
 <?php
 require_once("config.php");
 $db = get_pdo_connection();
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Handle form submission
+    $content = $_POST['cID'];
+    $user_id = $_SESSION['uID'];
+
+    // Insert new post into database
+    $stmt = $db->prepare("INSERT INTO posts (user_id, content) VALUES (?, ?)");
+    $stmt->execute([$uID, $Content]);
+}
 
 ?>
-
 
 <!DOCTYPE html>
 <html>
 
 <head>
-    <title>FAQ</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    <title>Messenger</title>
+    <link rel="stylesheet" type="text/css" href="chatroom.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
@@ -59,6 +67,7 @@ $db = get_pdo_connection();
                 <div class="dropdown-menu">
                     <?php
                     // Check if user is logged in
+                    
                     if (isset($_SESSION['uID'])) {
                         // Display logout and edit profile links
                         echo "<a href='logout.php'>Logout</a>";
@@ -77,85 +86,63 @@ $db = get_pdo_connection();
             </div>
         </div>
         </div>
-
-
-
-        <center class="text">
-            <div class="line">
-                <h1 class='lineUp'>Frequently Asked Questions</h1>
-            </div>
-        </center>
-        <div
-            style="justify-content: center; align-items: center; display: flex; flex-direction: column; padding-bottom: 100px;">
-            <p style="margin: 0px 100px 10px 100px;"><b>Q: What is Spark Social?</b></p>
-
-            <ul>
-                <li>A: <b>Spark Social is a social media platform that enables people to connect with others, share
-                        their
-                        thoughts, ideas, and interests.</b></li>
-            </ul>
-            <hr>
-
-
-
-            <p style="margin: 0px 100px 10px 100px;"><b> Q: Is Spark Social free to use?</b></p>
-            <ul>
-                <li>A: <b>Yes, Spark Social is free to use. However, we may introduce premium features in the future
-                        that will
-                        require a fee.</b></li>
-            </ul>
-            <hr>
-
-
-            <p style="margin: 0px 100px 10px 100px;"><b> Q: Is my personal information safe on Spark Social?</b></p>
-            <ul>
-                <li>A: <b>Yes, we take the security of our users' personal information very seriously. We use
-                        industry-standard
-                        security measures to protect your data, and we do not share your information with third
-                        parties without
-                        your
-                        consent.</b></li>
-            </ul>
-            <hr>
-
-
-            <p style="margin: 0px 100px 10px 100px;"><b> Q: Can I create a business profile on Spark Social?</b></p>
-            <ul>
-                <li>A: <b>Yes, you can create a business profile on Spark Social. However, we have specific
-                        guidelines for
-                        business
-                        profiles, and we reserve the right to remove any profiles that violate our policies.</b>
-                </li>
-            </ul>
-            <hr>
-
-
-            <p style="margin: 0px 100px 10px 100px;"><b> Q: What kind of content is allowed on Spark Social?</b></p>
-            <ul>
-                <li>A: <b>We allow all kinds of content on Spark Social, as long as it does not violate our
-                        community
-                        guidelines.
-                        We do not tolerate hate speech, harassment, or any other form of harmful or offensive
-                        content.</b>
-                </li>
-            </ul>
-            <hr>
         </div>
 
 
-        <!--
-         <?php
-         require_once("config.php");
-         session_start();
-         if (isset($_SESSION['username'])) {
-             echo "<p>Welcome, " . $_SESSION['username'] . "!</p>";
-             echo "<p><a href='logout.php'>Logout</a></p>";
-         } else {
-             echo "<p><a href='login.php'>Login</a> or <a href='register.php'>Register</a></p>";
-         }
-         ?>
 
-      -->
+        <center>
+
+            <?php
+            // Get the friend_id from the URL parameter
+            if (isset($_GET['friend_id'])) {
+                $friend_id = $_GET['friend_id'];
+
+                // Fetch the username of the friend from the database
+                $stmt = $db->prepare("SELECT username FROM users WHERE uID = :friend_id");
+                $stmt->execute(array(':friend_id' => $friend_id));
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                // Display the friend's username on the page
+                $friend_username = $result['username'];
+                echo "<center class='text'>";
+                echo "<div class='line'>";
+                echo "<h1 class='lineUp'>$friend_username</h1>";
+                echo "</div>";
+                echo "</center>";
+
+            } else {
+                echo "Error: No friend ID specified.";
+            }
+            ?>
+
+
+
+
+        </center>
+
+        <center>
+            <div style="position: absolute; bottom: 75px; right: 50%; left: 40%;">
+                <div style="justify-content: center;" class="Message">
+                    <input title="Write Message" tabindex="i" pattern="\d+" placeholder="Message.." class="MsgInput"
+                        type="text">
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.0" width="30.000000pt" height="30.000000pt"
+                        viewBox="0 0 30.000000 30.000000" preserveAspectRatio="xMidYMid meet" class="SendSVG">
+                        <g transform="translate(0.000000,30.000000) scale(0.100000,-0.100000)" fill="#ffffff70"
+                            stroke="none">
+                            <path
+                                d="M44 256 c-3 -8 -4 -29 -2 -48 3 -31 5 -33 56 -42 28 -5 52 -13 52 -16 0 -3 -24 -11 -52 -16 -52 -9 -53 -9 -56 -48 -2 -21 1 -43 6 -48 10 -10 232 97 232 112 0 7 -211 120 -224 120 -4 0 -9 -6 -12 -14z">
+                            </path>
+                        </g>
+                    </svg><span class="l"></span>
+
+                </div>
+            </div>
+
+
+
+
+        </center>
+
     </main>
 </body>
 

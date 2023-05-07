@@ -75,6 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         echo "<a href='inbox.php'>Inbox</a>";
                         echo "<a href='addfriends.php'>Add Friend</a>";
                         echo "<a href='directmessages.php'>Direct Messages</a>";
+                        echo "<a href='post.php'>Create Post</a>";
                     } else {
                         // Display register and login links
                         echo "<a href='register.php'>Register</a>";
@@ -100,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php
             // Check if user is logged in
             if (isset($_SESSION['uID'])) {
-                $stmt = $db->prepare("SELECT u.username, u.profilepic
+                $stmt = $db->prepare("SELECT u.username, u.profilepic, u.uID
                           FROM Canfriend c
                           INNER JOIN users u ON (c.uID1 = u.uID OR c.uID2 = u.uID)
                           WHERE (c.uID1 = :uid OR c.uID2 = :uid) AND c.isfriend = 1 AND c.isclosefriend = 0 AND u.uID <> :uid");
@@ -111,14 +112,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     echo "You don't have any friends yet.";
                 } else {
                     foreach ($friends as $friend) {
-                        echo "<p>Username: " . $friend['username'] . "</p>";
-                        echo "<img style='width: 200px; border-radius: 50%; height: 200px;' src='images/" . $friend['profilepic'] . "' alt='Profile Picture'><br>";
+                        echo "<div style='display:flex; align-items:center; justify-content: center;'>";
+                        echo "<p style='margin-right: 10px;'>" . $friend['username'] . "</p>";
+                        echo "<a href='chatroom.php?friend_id=" . $friend['uID'] . "' target='_blank'><img style='padding: 20px; width: 125px; border-radius: 50%; height: 125px;' src='images/" . $friend['profilepic'] . "' alt='Profile Picture'></a>";
+                        echo "</div>";
                     }
+
+
+
                 }
             } else {
                 echo "You must log in to view your friends.";
             }
             ?>
+
+
 
 
 
