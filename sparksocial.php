@@ -95,14 +95,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </center>
 
-        <center style="padding-top: 75px;">
+        <center>
 
             <?php
             // Check if user is logged in
             
             if (isset($_SESSION['uID'])) {
                 // Display logout and edit profile links
-                echo '<button class="glowing-btn"><span class="glowing-txt">P<span class="faulty-letter">O</span>ST</span></button>';
+                echo '<button class = "buttonpost"> Post now
+                </button>';
                 echo '<div style = "padding-bottom: 100px;"></div>';
             } else {
 
@@ -116,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
         </center>
-        <center>
+        <center style="padding-bottom: 100px;">
             <?php
             // Retrieve posts from the database
             $stmt = $db->prepare("SELECT c.text, u.username, u.profilepic, c.datecreated

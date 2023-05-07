@@ -95,22 +95,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </center>
 
-        <center style="padding-top: 75px;">
+        <center style="padding-bottom: 100px;">
 
             <?php
             // Check if user is logged in
-            
             if (isset($_SESSION['uID'])) {
-                // Display logout and edit profile links
-                echo '<button class="glowing-btn"><span class="glowing-txt">P<span class="faulty-letter">O</span>ST</span></button>';
-                echo '<div style = "padding-bottom: 100px;"></div>';
+                $stmt = $db->prepare("SELECT u.username, u.profilepic
+                          FROM Canfriend c
+                          INNER JOIN users u ON (c.uID1 = u.uID OR c.uID2 = u.uID)
+                          WHERE (c.uID1 = :uid OR c.uID2 = :uid) AND c.isfriend = 1 AND c.isclosefriend = 0 AND u.uID <> :uid");
+                $stmt->execute(array(':uid' => $_SESSION['uID']));
+                $friends = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                if (count($friends) == 0) {
+                    echo "You don't have any friends yet.";
+                } else {
+                    foreach ($friends as $friend) {
+                        echo "<p>Username: " . $friend['username'] . "</p>";
+                        echo "<img style='width: 200px; border-radius: 50%; height: 200px;' src='images/" . $friend['profilepic'] . "' alt='Profile Picture'><br>";
+                    }
+                }
             } else {
-
-                // Customer cannot post or view posts
-                echo "You must login in order to post.";
-
+                echo "You must log in to view your friends.";
             }
             ?>
+
+
 
 
 

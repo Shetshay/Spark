@@ -63,6 +63,9 @@ $db = get_pdo_connection();
                         // Display logout and edit profile links
                         echo "<a href='logout.php'>Logout</a>";
                         echo "<a href='edit-profile.php'>Edit Profile</a>";
+                        echo "<a href='inbox.php'>Inbox</a>";
+                        echo "<a href='addfriends.php'>Add Friend</a>";
+                        echo "<a href='directmessages.php'>Direct Messages</a>";
                     } else {
                         // Display register and login links
                         echo "<a href='register.php'>Register</a>";
@@ -81,7 +84,8 @@ $db = get_pdo_connection();
                 <h1 class='lineUp'>Frequently Asked Questions</h1>
             </div>
         </center>
-        <div style="justify-content: center; align-items: center; display: flex; flex-direction: column;">
+        <div
+            style="justify-content: center; align-items: center; display: flex; flex-direction: column; padding-bottom: 100px;">
             <p style="margin: 0px 100px 10px 100px;"><b>Q: What is Spark Social?</b></p>
 
             <ul>
