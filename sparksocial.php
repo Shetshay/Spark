@@ -72,6 +72,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         // Display logout and edit profile links
                         echo "<a href='logout.php'>Logout</a>";
                         echo "<a href='edit-profile.php'>Edit Profile</a>";
+                        echo "<a href='inbox.php'>Inbox</a>";
+                        echo "<a href='addfriends.php'>Add Friend</a>";
+                        echo "<a href='directmessages.php'>Direct Messages</a>";
                     } else {
                         // Display register and login links
                         echo "<a href='register.php'>Register</a>";
@@ -81,19 +84,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
         </div>
-        </div>
-
-
-
-        <div class="wrapper2">
-            <div class="dropdown">
-                <img src="images/chat.png" width="57" height="57" />
-                <div class="dropdown-menu">
-                    <a href="edit-profile.php">Edit Profile</a>
-                    <a href="register.php">Register</a>
-                    <a href="login.php">Login</a>
-                </div>
-            </div>
         </div>
         </div>
 
@@ -130,10 +120,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php
             // Retrieve posts from the database
             $stmt = $db->prepare("SELECT c.text, u.username, u.profilepic, c.datecreated
-            FROM Content c 
-            INNER JOIN users u ON c.uID = u.uID 
-            ORDER BY c.datecreated DESC
-            ");
+                      FROM Content c 
+                      INNER JOIN users u ON c.uID = u.uID 
+                      WHERE c.level = '10'
+                      ORDER BY c.datecreated DESC;");
+
             $stmt->execute();
             $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

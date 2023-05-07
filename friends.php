@@ -136,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <?php
             $user_id = $_SESSION['uID'];
-            echo $_SESSION['uID'];
+            //echo $_SESSION['uID'];
             // Retrieve posts from the database
             
             $stmt = $db->prepare("SELECT * FROM Content NATURAL JOIN users NATURAL JOIN
@@ -158,28 +158,66 @@ WHERE level = '20';");
             <div class="posts">
                 <?php foreach ($posts as $post): ?>
                     <div class="post">
-                        <p>
-                            <?= $post['text'] ?>
-                        </p>
 
-                        <p>Posted by
-                            <?= $post['username'] ?>
-                        </p>
+                        <div class="card-container">
+                            <div class="post-date" style="text-align:center; color:#555;">
+                                <?= $post['datecreated'] ?>
+                            </div>
+                            <div class="card-header">
+                                <div class="img-avatar">
+                                    <img style="width: 50px;height: 50px; border-radius: 50%; margin-right: 14px;"
+                                        src="images/<?= $post['profilepic'] ?>" alt="profile picture">
+                                </div>
 
-                        <?php if (isset($_SESSION['uID'])): ?>
-                            <form method="post" action="create_comment.php">
-                                <input type="hidden" name="post_id" value="<?= $post['cID'] ?>">
-                                <textarea name="comment_content" placeholder="Add a comment"></textarea>
-                                <button type="submit">Comment</button>
-                            </form>
-                        <?php endif; ?>
+                                <div class="text-chat">
+                                    <p>Posted by
+                                        <?= $post['username'] ?>
+                                    </p>
+                                    <div class="message-box left">
+                                        <p>
+                                            <?= $post['text'] ?>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="messages-container">
+                                    <div class="message-box right">
+                                        <p>Test comment.</p>
+                                    </div>
+                                </div>
 
-                        <?php
+
+
+
+                                <?php if (isset($_SESSION['uID'])): ?>
+                                    <div class="message-input">
+                                        <form method="post" action="create_comment.php">
+                                            <input type="hidden" name="post_id" value="<?= $post['cID'] ?>">
+                                            <textarea name="comment_content" type="" class="message-send"
+                                                placeholder="Type your message here"></textarea>
+                                            <button type="" class="button-send">Comment</button>
+                                        </form>
+                                    </div>
+                                <?php endif; ?>
+
+
+
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+                        <!-- <?php
                         // Retrieve comments for the post from the database
                         $stmt = $db->prepare("SELECT * FROM Content WHERE cID = ? ORDER BY created_at DESC");
                         $stmt->execute([$post['cID']]);
                         $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                        ?>
+                        ?> -->
 
                         <div class="comments">
                             <?php foreach ($comments as $comment): ?>
@@ -194,7 +232,8 @@ WHERE level = '20';");
                             <?php endforeach; ?>
                         </div>
                     </div>
-                <?php endforeach; ?>
+                <?php endforeach;
+                ?>
             </div>
 
         </center>

@@ -420,15 +420,6 @@ header::after {
   padding: 20px;
 }
 
-.wrapper2 {
-  position: absolute;
-  display: inline-block;
-  bottom: 0;
-  right: 0;
-  cursor: pointer;
-  padding: 20px;
-}
-
 .dropdown {
   position: relative;
   display: inline-block;
