@@ -195,11 +195,12 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                                 <?php if (isset($_SESSION['uID'])): ?>
                                     <div class="message-input">
-                                        <form method="post" action="create_comment.php">
+                                        <form method="post" action='comment.php'>
                                             <input type="hidden" name="post_id" value="<?= $post['cID'] ?>">
+                                            <input type="hidden" name="level" value="<?= $post['level'] ?>">
                                             <textarea name="comment_content" type="" class="message-send"
                                                 placeholder="Type your message here"></textarea>
-                                            <button type="" class="button-send">Comment</button>
+                                            <button type="submit" name='post_comment' class="button-send">Comment</button>
                                         </form>
                                     </div>
                                 <?php endif; ?>

@@ -127,7 +127,7 @@ $db = get_pdo_connection();
                     $stmt->bindValue(':Media', $post_media, PDO::PARAM_STR);
                     $stmt->bindValue(':level', $post_level, PDO::PARAM_INT);
                     $stmt->execute();
-
+                    
                     // Save media file
                     if (!empty($post_media)) {
                         $target_dir = "media/";

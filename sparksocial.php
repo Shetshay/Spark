@@ -1,10 +1,12 @@
 <?php
 require_once("config.php");
+require_once("comment.php");
 $db = get_pdo_connection();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Handle form submission
     $content = $_POST['cID'];
     $user_id = $_SESSION['uID'];
+
 
     // Insert new post into database
     $stmt = $db->prepare("INSERT INTO posts (user_id, content) VALUES (?, ?)");
@@ -120,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <center style="padding-bottom: 100px;">
             <?php
             // Retrieve posts from the database
-            $stmt = $db->prepare("SELECT c.text, u.username, u.profilepic, c.datecreated
+            $stmt = $db->prepare("SELECT c.cID, c.text, u.username, u.profilepic, c.datecreated, c.level
                       FROM Content c 
                       INNER JOIN users u ON c.uID = u.uID 
                       WHERE c.level = '10'
@@ -165,15 +167,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
 
 
-
+                        
 
                                 <?php if (isset($_SESSION['uID'])): ?>
                                     <div class="message-input">
-                                        <form method="post" action="create_comment.php">
+                                        <form method="post" action='comment.php'>
                                             <input type="hidden" name="post_id" value="<?= $post['cID'] ?>">
+                                            <input type="hidden" name="level" value="<?= $post['level'] ?>">
                                             <textarea name="comment_content" type="" class="message-send"
                                                 placeholder="Type your message here"></textarea>
-                                            <button type="" class="button-send">Comment</button>
+                                            <button type="submit" name='post_comment' class="button-send">Comment</button>
                                         </form>
                                     </div>
                                 <?php endif; ?>
@@ -191,8 +194,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         <!-- <?php
                         // Retrieve comments for the post from the database
-                        $stmt = $db->prepare("SELECT * FROM Content WHERE cID = ? ORDER BY created_at DESC");
-                        $stmt->execute([$post['cID']]);
+                        $stmt = $db->prepare("SELECT * FROM Content WHERE pcID = ? ORDER BY created_at DESC");
+                        $stmt->execute([$post['cID']]); 
                         $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         ?> -->
 
