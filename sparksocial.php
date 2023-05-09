@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <center style="padding-bottom: 100px;">
             <?php
             // Retrieve posts from the database
-            $stmt = $db->prepare("SELECT c.text, u.username, u.profilepic, c.datecreated, c.Media
+            $stmt = $db->prepare("SELECT c.cID, c.text, u.username, u.profilepic, c.datecreated, c.Media, c.level
                       FROM Content c 
                       INNER JOIN users u ON c.uID = u.uID 
                       WHERE c.level = '10'
@@ -239,11 +239,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                                 <?php if (isset($_SESSION['uID'])): ?>
                                     <div class="message-input">
-                                        <form method="post" action="create_comment.php">
+                                        <form method="post" action='comment.php'>
                                             <input type="hidden" name="post_id" value="<?= $post['cID'] ?>">
+                                            <input type="hidden" name="level" value="<?= $post['level'] ?>">
                                             <textarea name="comment_content" type="" class="message-send"
                                                 placeholder="Type your message here"></textarea>
-                                            <button type="" class="button-send">Comment</button>
+                                            <button type="submit" name='post_comment' class="button-send">Comment</button>
                                         </form>
                                     </div>
                                 <?php endif; ?>

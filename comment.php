@@ -21,7 +21,8 @@ if (isset($_POST['post_comment'])) {
     }
     if ($level == 20) {
         header("Location: friends.php");
-    } else {
+    }
+    if ($level == 30) {
         header("Location: closefriends.php");
     }
     echo $level;
