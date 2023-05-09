@@ -16,14 +16,14 @@
         $stmt->bindValue(':pcID', $parent_id, PDO::PARAM_INT);
         $stmt->bindValue(':level', $level, PDO::PARAM_INT);
         $stmt->execute();
-        if ($level == 10){
-            header("Location: sparksocial.php");
-        }
-        if($level == 20){
+        if ($level == 20){
             header("Location: friends.php");
         }
-        else{
+        if($level == 30){
             header("Location: closefriends.php");
+        }
+        else{
+            header("Location: sparksocial.php");
         }
         echo $level;
     }
