@@ -8,7 +8,7 @@ $db = get_pdo_connection();
 <html>
 
 <head>
-    <title>Spark Social</title>
+    <title>Create Post</title>
     <link rel="stylesheet" type="text/css" href="createpost.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
