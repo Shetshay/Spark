@@ -122,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <center style="padding-bottom: 100px;">
             <?php
             // Retrieve posts from the database
-            $stmt = $db->prepare("SELECT c.text, u.username, u.profilepic, c.datecreated, c.Media
+            $stmt = $db->prepare("SELECT c.cID, c.text, u.username, u.profilepic, c.datecreated, c.Media, c.level
                       FROM Content c 
                       INNER JOIN users u ON c.uID = u.uID 
                       WHERE c.level = '10'
