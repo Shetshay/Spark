@@ -217,7 +217,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                 $media_file = $new_file;
                                             }
                                             ?>
-                                            <p>Media:</p>
                                             <img src="<?= $media_file ?>" alt="Post Media">
                                         <?php endif; ?>
 
