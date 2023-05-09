@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <center style="padding-bottom: 100px;">
             <?php
             // Retrieve posts from the database
-            $stmt = $db->prepare("SELECT c.text, u.username, u.profilepic, c.datecreated
+            $stmt = $db->prepare("SELECT c.text, u.username, u.profilepic, c.datecreated, c.Media
                       FROM Content c 
                       INNER JOIN users u ON c.uID = u.uID 
                       WHERE c.level = '10'
@@ -128,8 +128,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $stmt->execute();
             $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
             ?>
+
 
 
             <div class="posts">
@@ -154,8 +154,78 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <p>
                                             <?= $post['text'] ?>
                                         </p>
+                                        <?php if ($post['Media']): ?>
+                                            <?php
+                                            $media_file = "media/" . $post['Media'];
+
+                                            // Get the dimensions of the image
+                                            list($width, $height, $type) = getimagesize($media_file);
+                                            // This code uses the getimagesize() function to retrieve the dimensions and type of the image file. Then, depending on the image type, it uses the appropriate imagecreatefrom*() function to load the image into memory. Finally, it uses the appropriate image*() function to save the resized image to a new file.
+                                            // If either dimension is greater than 200px, resize the image
+                                            if ($width > 200 || $height > 200) {
+                                                // Calculate the new dimensions
+                                                $new_width = 200;
+                                                $new_height = 200;
+                                                if ($width > $height) {
+                                                    $new_height = ($height / $width) * $new_width;
+                                                } else {
+                                                    $new_width = ($width / $height) * $new_height;
+                                                }
+
+                                                // Create a new image with the new dimensions
+                                                switch ($type) {
+                                                    case IMAGETYPE_JPEG:
+                                                        $image = imagecreatefromjpeg($media_file);
+                                                        break;
+                                                    case IMAGETYPE_PNG:
+                                                        $image = imagecreatefrompng($media_file);
+                                                        break;
+                                                    case IMAGETYPE_WEBP:
+                                                        $image = imagecreatefromwebp($media_file);
+                                                        break;
+                                                    case IMAGETYPE_GIF:
+                                                        $image = imagecreatefromgif($media_file);
+                                                        break;
+                                                    default:
+                                                        throw new Exception("Unsupported image format");
+                                                }
+                                                $image_p = imagecreatetruecolor($new_width, $new_height);
+
+                                                // Resize the image
+                                                imagecopyresampled($image_p, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
+
+                                                // Save the resized image to a new file
+                                                $new_file = "media/resized_" . $post['Media'];
+                                                switch ($type) {
+                                                    case IMAGETYPE_JPEG:
+                                                        imagejpeg($image_p, $new_file);
+                                                        break;
+                                                    case IMAGETYPE_PNG:
+                                                        imagepng($image_p, $new_file);
+                                                        break;
+                                                    case IMAGETYPE_WEBP:
+                                                        imagewebp($image_p, $new_file);
+                                                        break;
+                                                    case IMAGETYPE_GIF:
+                                                        imagegif($image_p, $new_file);
+                                                        break;
+                                                    default:
+                                                        throw new Exception("Unsupported image format");
+                                                }
+
+                                                // Set the media file to the resized image
+                                                $media_file = $new_file;
+                                            }
+                                            ?>
+                                            <p>Media:</p>
+                                            <img src="<?= $media_file ?>" alt="Post Media">
+                                        <?php endif; ?>
+
+
                                     </div>
                                 </div>
+
+
                             </div>
                             <div class="card-body">
                                 <div class="messages-container">

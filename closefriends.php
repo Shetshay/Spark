@@ -134,27 +134,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php
             $user_id = $_SESSION['uID'];
             //echo $_SESSION['uID'];
-            // Retrieve posts from the database
-            $stmt = $db->prepare("SELECT * FROM Content NATURAL JOIN users NATURAL JOIN
-            (
-                SELECT uID2 as uID
-                FROM Canfriend
-                WHERE uID1 = $user_id
-            
-                UNION
-                SELECT uID1 as uID
-                FROM Canfriend
-                WHERE uID2 = $user_id
+// Retrieve posts from the database
+//AARON WAS HERE 5-6
+            $stmt = $db->prepare("SELECT c.*, u.username, u.profilepic, c.datecreated, c.Media
+                      FROM Content c 
+                      NATURAL JOIN users u 
+                      NATURAL JOIN (
+                        SELECT uID2 as uID
+                        FROM Canfriend
+                        WHERE uID1 = $user_id
 
-                UNION
-                SELECT :uID as uID
-            ) as fc
-            WHERE level = '30'");
+                        UNION
+                        SELECT uID1 as uID
+                        FROM Canfriend
+                        WHERE uID2 = $user_id
+
+                        UNION
+                        SELECT :uID as uID
+                      ) as fc
+                      WHERE level = '30'");
             $stmt->bindValue(':uID', $user_id, PDO::PARAM_INT);
             $stmt->execute();
             $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
             ?>
+
+
 
             <div class="posts">
                 <?php foreach ($posts as $post): ?>
@@ -178,6 +182,72 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <p>
                                             <?= $post['text'] ?>
                                         </p>
+                                        <?php if ($post['Media']): ?>
+                                            <?php
+                                            $media_file = "media/" . $post['Media'];
+
+                                            // Get the dimensions of the image
+                                            list($width, $height, $type) = getimagesize($media_file);
+                                            // This code uses the getimagesize() function to retrieve the dimensions and type of the image file. Then, depending on the image type, it uses the appropriate imagecreatefrom*() function to load the image into memory. Finally, it uses the appropriate image*() function to save the resized image to a new file.
+                                            // If either dimension is greater than 200px, resize the image
+                                            if ($width > 200 || $height > 200) {
+                                                // Calculate the new dimensions
+                                                $new_width = 200;
+                                                $new_height = 200;
+                                                if ($width > $height) {
+                                                    $new_height = ($height / $width) * $new_width;
+                                                } else {
+                                                    $new_width = ($width / $height) * $new_height;
+                                                }
+
+                                                // Create a new image with the new dimensions
+                                                switch ($type) {
+                                                    case IMAGETYPE_JPEG:
+                                                        $image = imagecreatefromjpeg($media_file);
+                                                        break;
+                                                    case IMAGETYPE_PNG:
+                                                        $image = imagecreatefrompng($media_file);
+                                                        break;
+                                                    case IMAGETYPE_WEBP:
+                                                        $image = imagecreatefromwebp($media_file);
+                                                        break;
+                                                    case IMAGETYPE_GIF:
+                                                        $image = imagecreatefromgif($media_file);
+                                                        break;
+                                                    default:
+                                                        throw new Exception("Unsupported image format");
+                                                }
+                                                $image_p = imagecreatetruecolor($new_width, $new_height);
+
+                                                // Resize the image
+                                                imagecopyresampled($image_p, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
+
+                                                // Save the resized image to a new file
+                                                $new_file = "media/resized_" . $post['Media'];
+                                                switch ($type) {
+                                                    case IMAGETYPE_JPEG:
+                                                        imagejpeg($image_p, $new_file);
+                                                        break;
+                                                    case IMAGETYPE_PNG:
+                                                        imagepng($image_p, $new_file);
+                                                        break;
+                                                    case IMAGETYPE_WEBP:
+                                                        imagewebp($image_p, $new_file);
+                                                        break;
+                                                    case IMAGETYPE_GIF:
+                                                        imagegif($image_p, $new_file);
+                                                        break;
+                                                    default:
+                                                        throw new Exception("Unsupported image format");
+                                                }
+
+                                                // Set the media file to the resized image
+                                                $media_file = $new_file;
+                                            }
+                                            ?>
+                                            <p>Media:</p>
+                                            <img src="<?= $media_file ?>" alt="Post Media">
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -193,11 +263,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                                 <?php if (isset($_SESSION['uID'])): ?>
                                     <div class="message-input">
-                                        <form method="post" action="create_comment.php">
+                                        <form method="post" action='comment.php'>
                                             <input type="hidden" name="post_id" value="<?= $post['cID'] ?>">
+                                            <input type="hidden" name="level" value="<?= $post['level'] ?>">
                                             <textarea name="comment_content" type="" class="message-send"
                                                 placeholder="Type your message here"></textarea>
-                                            <button type="" class="button-send">Comment</button>
+                                            <button type="submit" name='post_comment' class="button-send">Comment</button>
                                         </form>
                                     </div>
                                 <?php endif; ?>
