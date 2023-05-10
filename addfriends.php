@@ -144,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Check if the query returned any rows
                 if ($query2->rowCount() > 0) {
                     // The two user IDs are friends, do nothing
-                    echo "We are here and we have a match betwen " . $_SESSION['username'] . " and " . $result['username'] . ". so we do not need to send them a friend request\n";
+                    echo "\nAlready friends with " . $result['username'] . "\n";
                     //echo "The two users which are " . $_SESSION['username']; . " and " . $result['username'] . " are already friends"; 
                 } else {
                     echo "Since you are not friends with " . $result['username'] . " we are sending them a friend request\n"; 
