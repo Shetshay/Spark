@@ -1,54 +1,5 @@
 <?php
 require_once("config.php");
-$db = get_pdo_connection();
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-// Make sure that the person receiving the request is already your friend 
-
-// Handle form submission
-    #$content = $_POST['cID'];
-    #$user_id = $_SESSION['uID'];
-
-    // Insert new post into database
-    #$stmt = $db->prepare("INSERT INTO posts (user_id, content) VALUES (?, ?)");
-    #$stmt->execute([$user_id, $content]);
-
-        $username = "";
-        // Check if the form data is not empty
-        if (isset($_POST['username'])) {
-// The form was filled out
-            
-            // Check if the username exists 
-            $username = $_POST['username'];
-
-            $db = get_pdo_connection();
-            $query = $db->prepare("SELECT * FROM users WHERE username = ?");
-            $query->execute([$username]);
-            $result = $query->fetch(PDO::FETCH_ASSOC);
-
-            // The username exists
-            if ($query->rowCount() > 0) {
-                echo "This is the row count " . $query->rowCount();
-                // The user exists in the database
-                echo "User " . $username . " exists!";
-                // Access the user's ID, email, or other fields from the $result array
-                echo "The response from the database username is: " . $result['username'];
-                echo "The response from the database username is: " . $result['uID'];
-
-                
-            } else {
-                
-                // The user does not exist in the database
-                echo "User " . $username . " does not exist.";
-            }
-
-        } else {
-            // The form was not filled out
-            echo "Please fill out the form";
-        }
-
-}
-
 ?>
 
 
@@ -94,6 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="dropdown">
                 <?php
                 if (isset($_SESSION['uID'])) {
+                    
+                    $db = get_pdo_connection();
                     // get user's current profile picture
                     $stmt = $db->prepare("SELECT profilepic FROM users WHERE uID = ?");
                     $stmt->execute(array($_SESSION['uID']));
@@ -154,7 +107,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </svg>
                 </button>
             </form>
+<?php 
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+// Make sure that the person receiving the request is already your friend 
+
+        $username = "";
+        // Check if the form data is not empty
+        if (isset($_POST['username'])) {
+            // The form was filled out
+            $db = get_pdo_connection();
+            
+            // Check if the username exists 
+            $username = $_POST['username'];
+
+
+            $query = $db->prepare("SELECT * FROM users WHERE username = ?");
+            $query->execute([$username]);
+            $result = $query->fetch(PDO::FETCH_ASSOC);
+
+            // The username exists
+            if ($query->rowCount() > 0) {
+               // echo "This is the row count " . $query->rowCount();
+                // The user exists in the database
+               // echo "User " . $username . " exists!";
+                // Access the user's ID, email, or other fields from the $result array
+               // echo "The response from the database username is: " . $result['username'];
+               // echo "The response from the database username is: " . $result['uID'];
+                
+                // Prepare a SQL query to check if the two user IDs exist in the isfriend column
+                $query2 = $db->prepare("SELECT * FROM Canfriend WHERE (uID1 = ? AND uID2 = ?) OR (uID1 = ? AND uID2 = ?)");
+                $query2->execute([$_SESSION['uID'], $result['uID'], $result['uID'], $_SESSION['uID']]);
+                $result2 = $query2->fetch(PDO::FETCH_ASSOC);
+
+                // Check if the query returned any rows
+                if ($query2->rowCount() > 0) {
+                    // The two user IDs are friends, do nothing
+                    echo "We are here and we have a match betwen " . $_SESSION['username'] . " and " . $result['username'] . ". so we do not need to send them a friend request\n";
+                    //echo "The two users which are " . $_SESSION['username']; . " and " . $result['username'] . " are already friends"; 
+                } else {
+                    echo "Since you are not friends with " . $result['username'] . " we are sending them a friend request\n"; 
+                    /// Prepare a SQL query to insert the user IDs and default values into the table
+                    $stmt = $db->prepare("INSERT INTO Canfriend (uID1, uID2, isclosefriend, isfriend) VALUES (?, ?, 1, 1)");
+                    $stmt->execute([$result['uID'], $_SESSION['uID']]);
+                }
+
+            } else {
+                
+                // The user does not exist in the database
+                echo "User " . $username . " does not exist.";
+            }
+
+        } else {
+            // The form was not filled out
+            echo "Please fill out the form";
+        }
+
+}
+?>
 
         </center>
 

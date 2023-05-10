@@ -110,7 +110,7 @@ if (isset($_SESSION['uID'])) {
 
             // Prepare SQL statement to retrieve email and password
             // Prepare SQL statement to retrieve email and password
-            $stmt = $db->prepare("SELECT email, Password, uID FROM users WHERE email = ?");
+            $stmt = $db->prepare("SELECT username, email, Password, uID FROM users WHERE email = ?");
 
             // Bind parameters to statement
             $stmt->bindParam(1, $email);
@@ -125,6 +125,8 @@ if (isset($_SESSION['uID'])) {
             if ($result && password_verify($password, $result['Password'])) {
                 // Redirect user to dashboard
                 $_SESSION['uID'] = $result['uID'];
+                echo "Adding username";
+                $_SESSION['username'] = $result['username'];
                 header('Location: sparksocial.php');
                 exit;
             } else {
