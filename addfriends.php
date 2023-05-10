@@ -2,16 +2,56 @@
 require_once("config.php");
 $db = get_pdo_connection();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Handle form submission
-    $content = $_POST['cID'];
-    $user_id = $_SESSION['uID'];
+
+// Make sure that the person receiving the request is already your friend 
+
+// Handle form submission
+    #$content = $_POST['cID'];
+    #$user_id = $_SESSION['uID'];
 
     // Insert new post into database
-    $stmt = $db->prepare("INSERT INTO posts (user_id, content) VALUES (?, ?)");
-    $stmt->execute([$uID, $Content]);
+    #$stmt = $db->prepare("INSERT INTO posts (user_id, content) VALUES (?, ?)");
+    #$stmt->execute([$user_id, $content]);
+
+        $username = "";
+        // Check if the form data is not empty
+        if (isset($_POST['username'])) {
+// The form was filled out
+            
+            // Check if the username exists 
+            $username = $_POST['username'];
+
+            $db = get_pdo_connection();
+            $query = $db->prepare("SELECT * FROM users WHERE username = ?");
+            $query->execute([$username]);
+            $result = $query->fetch(PDO::FETCH_ASSOC);
+
+            // The username exists
+            if ($query->rowCount() > 0) {
+                echo "This is the row count " . $query->rowCount();
+                // The user exists in the database
+                echo "User " . $username . " exists!";
+                // Access the user's ID, email, or other fields from the $result array
+                echo "The response from the database username is: " . $result['username'];
+                echo "The response from the database username is: " . $result['uID'];
+
+                
+            } else {
+                
+                // The user does not exist in the database
+                echo "User " . $username . " does not exist.";
+            }
+
+        } else {
+            // The form was not filled out
+            echo "Please fill out the form";
+        }
+
 }
 
 ?>
+
+
 
 <!DOCTYPE html>
 <html>
@@ -97,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </center>
 
         <center>
-            <form class="form">
+            <form class="form" method="POST" >
                 <button>
                     <svg width="17" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" role="img"
                         aria-labelledby="search">
@@ -106,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </path>
                     </svg>
                 </button>
-                <input class="input" placeholder="Username" required="" type="text">
+                <input class="input" name="username" placeholder="Username" required="" type="text">
                 <button class="reset" type="reset">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="2">
@@ -120,5 +160,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     </main>
 </body>
+
 
 </html>
