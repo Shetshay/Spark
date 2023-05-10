@@ -81,21 +81,24 @@ if (isset($_POST['bio'])) {
 
                             $extensions = array("jpeg", "jpg", "png", "gif", "giphy", "HEIC", "webp");
 
-                            if ($file_size > 2097152) {
+                            if ($file_size > 8097152) {
                                 echo '<p style="text-align: center; color: red; text-shadow: 0px 0px 5px red;">File size must be less than 2 MB</p>';
-                                exit;
+
                             }
 
 
                             if (in_array($file_ext, $extensions) === false) {
                                 $errors[] = '<p style="text-align: center; color: red; text-shadow: 0px 0px 5px red;">' . $errors[] = "Extension not allowed, please choose a JPEG, GIF, giphy, HEIC, webp, or PNG file." . '</p>';
+
                             }
-                            if ($file_ext == "gif" || "giphy" && $file_size > 2097152) {
-                                $errors[] = '<p style="text-align: center; color: red; text-shadow: 0px 0px 5px red;">' . $errors[] = "File size must be less than 2 MB for GIF or giphy files" . '</p>';
+                            if (($file_ext == "gif" || $file_ext == "giphy") && $file_size > 2097152) {
+                                echo $errors[] = '<p style="text-align: center; color: red; text-shadow: 0px 0px 5px red;">' . $errors[] = "File size must be less than 2 MB for GIF or giphy files" . '</p>';
+
                             }
                             //echo var_dump($file_size);
-                            if ($file_ext != "gif" && $file_size > 2097152) {
+                            if ($file_ext != "gif" && $file_size > 8097152) {
                                 '<p style="text-align: center; color: red; text-shadow: 0px 0px 5px red;">' . $errors[] = "File size must be less than 2 MB for JPEG, JPG, HEIC, webp, or PNG files" . '</p>';
+
                             }
                             if (empty($errors) == true) {
                                 move_uploaded_file($file_tmp, "images/" . $file_name);
@@ -170,17 +173,20 @@ if (isset($_POST['bio'])) {
 
                     if (in_array($file_ext, $extensions) === false) {
                         echo '<p style="text-align: center; color: red; text-shadow: 0px 0px 5px red;">' . $errors[] = "Extension not allowed, please choose a JPEG, GIF, giphy, HEIF, or PNG file." . '</p>';
+
                     }
                     //echo var_dump($file_size);
-                    if ($file_size > 2097152) {
+                    if ($file_size > 8097152) {
                         echo $errors[] = '<p style="text-align: center; color: red; text-shadow: 0px 0px 5px red;">' . $errors[] = "File size must be less than 2 MB" . '</p>';
-                        exit;
+
                     }
-                    if ($file_ext == "gif" || "giphy" && $file_size > 2097152) {
+                    if (($file_ext == "gif" || $file_ext == "giphy") && $file_size > 2097152) {
                         echo $errors[] = '<p style="text-align: center; color: red; text-shadow: 0px 0px 5px red;">' . $errors[] = "File size must be less than 2 MB for GIF or giphy files" . '</p>';
+
                     }
-                    if ($file_ext != "gif" || "giphy" && $file_size > 2097152) {
+                    if ($file_ext != "gif" || "giphy" && $file_size > 8097152) {
                         $errors[] = '<p style="text-align: center; color: red; text-shadow: 0px 0px 5px red;">' . $errors[] = "File size must be less than 2 MB for JPEG, JPG, HEIC, webp, or PNG files" . '</p>';
+
                     }
                     if (empty($errors) == true) {
                         move_uploaded_file($file_tmp, "images/" . $file_name);
