@@ -99,7 +99,7 @@ require_once("config.php");
                         </path>
                     </svg>
                 </button>
-                <input class="input" name="username" placeholder="Username" required="" type="text">
+                <input class="input" name="friendbutton" placeholder="Username" required="" type="text">
                 <button class="reset" type="reset">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="2">
@@ -107,20 +107,46 @@ require_once("config.php");
                     </svg>
                 </button>
             </form>
+
+        <center class="text">
+            <div class="line">
+                <h1 class='lineUp'>Add to Close Friends</h1>
+            </div>
+        </center>
+
+        <center>
+            <form class="form" method="POST" >
+                <button>
+                    <svg width="17" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" role="img"
+                        aria-labelledby="search">
+                        <path d="M7.667 12.667A5.333 5.333 0 107.667 2a5.333 5.333 0 000 10.667zM14.334 14l-2.9-2.9"
+                            stroke="currentColor" stroke-width="1.333" stroke-linecap="round" stroke-linejoin="round">
+                        </path>
+                    </svg>
+                </button>
+                <input class="input" name="closefriendbutton" placeholder="Username" required="" type="text">
+                <button class="reset" type="reset">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </form>
+
 <?php 
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
+if ($_SERVER['REQUEST_METHOD'] === 'POST') 
+{
 // Make sure that the person receiving the request is already your friend 
-
         $username = "";
         // Check if the form data is not empty
-        if (isset($_POST['username'])) {
+        if (isset($_POST['friendbutton'])) 
+        {
             // The form was filled out
             $db = get_pdo_connection();
             
             // Check if the username exists 
-            $username = $_POST['username'];
+            $username = $_POST['friendbutton'];
 
 
             $query = $db->prepare("SELECT * FROM users WHERE username = ?");
@@ -128,7 +154,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $result = $query->fetch(PDO::FETCH_ASSOC);
 
             // The username exists
-            if ($query->rowCount() > 0) {
+            if ($query->rowCount() > 0) 
+            {
                // echo "This is the row count " . $query->rowCount();
                 // The user exists in the database
                // echo "User " . $username . " exists!";
@@ -142,28 +169,76 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $result2 = $query2->fetch(PDO::FETCH_ASSOC);
 
                 // Check if the query returned any rows
-                if ($query2->rowCount() > 0) {
+                if ($query2->rowCount() > 0) 
+                {
                     // The two user IDs are friends, do nothing
                     echo "\nAlready friends with " . $result['username'] . "\n";
                     //echo "The two users which are " . $_SESSION['username']; . " and " . $result['username'] . " are already friends"; 
-                } else {
+                } 
+                else 
+                {
                     echo "Since you are not friends with " . $result['username'] . " we are sending them a friend request\n"; 
                     /// Prepare a SQL query to insert the user IDs and default values into the table
-                    $stmt = $db->prepare("INSERT INTO Canfriend (uID1, uID2, isclosefriend, isfriend) VALUES (?, ?, 1, 1)");
+                    $stmt = $db->prepare("INSERT INTO Canfriend (uID1, uID2, isclosefriend, isfriend) VALUES (?, ?, 0, 1)");
                     $stmt->execute([$result['uID'], $_SESSION['uID']]);
                 }
-
-            } else {
-                
-                // The user does not exist in the database
-                echo "User " . $username . " does not exist.";
+            } 
+            else 
+            {
+                // The form was not filled out
+                echo "Username does not exist";
             }
-
-        } else {
-            // The form was not filled out
-            echo "Please fill out the form";
         }
+        else if (isset($_POST['closefriendbutton'])) 
+        {
+            // The form was filled out
+            $db = get_pdo_connection();
+            
+            // Check if the username exists 
+            $username = $_POST['closefriendbutton'];
 
+
+            $query3 = $db->prepare("SELECT * FROM users WHERE username = ?");
+            $query3->execute([$username]);
+            $result = $query3->fetch(PDO::FETCH_ASSOC);
+
+            // The username exists
+            if ($query3->rowCount() > 0) 
+            {
+                // echo "This is the row count " . $query->rowCount();
+                    // The user exists in the database
+                // echo "User " . $username . " exists!";
+                    // Access the user's ID, email, or other fields from the $result array
+                // echo "The response from the database username is: " . $result['username'];
+                // echo "The response from the database username is: " . $result['uID'];
+                    
+                // Prepare a SQL query to check if the two user IDs exist in the isfriend column
+                $query3 = $db->prepare("SELECT * FROM Canfriend WHERE (uID1 = ? AND uID2 = ?) OR (uID1 = ? AND uID2 = ?)");
+                $query3->execute([$_SESSION['uID'], $result['uID'], $result['uID'], $_SESSION['uID']]);
+                $result3 = $query3->fetch(PDO::FETCH_ASSOC);
+
+                    // Check if the query returned any rows
+                if ($query3->rowCount() > 0) 
+                {
+                    echo "Made " . $result['username'] . " a close friend"; 
+                    /// Prepare a SQL query to insert the user IDs and default values into the table
+                    $stmt = $db->prepare("UPDATE Canfriend SET isclosefriend = 1, isfriend = 1 WHERE uID1 = ? AND uID2 = ?");
+                    $stmt->execute([$result['uID'], $_SESSION['uID']]);
+                        
+                } 
+                else 
+                {
+                    // The user does not exist in the database
+                    echo "Add " . $username . " as friend first.";
+                }
+            } 
+            else 
+            {        
+                // The user does not exist in the database
+                echo "Add " . $username . " as friend first.";
+
+            }
+        }
 }
 ?>
 
