@@ -2,8 +2,6 @@
 require_once("config.php");
 ?>
 
-
-
 <!DOCTYPE html>
 <html>
 
@@ -25,7 +23,6 @@ require_once("config.php");
         <div class="container">
             <a href="sparksocial.php"><img src="images/sparksociallogo.png" alt="navbar-logo" class="logo"
                     style="width:75px; height:75px;"></a>
-
             <nav>
                 <ul>
                     <li><a href="sparksocial.php">Public</a></li>
@@ -38,7 +35,6 @@ require_once("config.php");
             </nav>
         </div>
     </header>
-
 
     <main>
         <div class="wrapper">
@@ -134,110 +130,59 @@ require_once("config.php");
             </form>
 
 <?php 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') 
 {
-// Make sure that the person receiving the request is already your friend 
-        $username = "";
-        // Check if the form data is not empty
-        if (isset($_POST['friendbutton'])) 
-        {
-            // The form was filled out
-            $db = get_pdo_connection();
-            
-            // Check if the username exists 
-            $username = $_POST['friendbutton'];
 
+        $db = get_pdo_connection();
+        
+        if (isset($_POST['friendbutton']) || isset($_POST['closefriendbutton'])) {       
+            
+            // Collect the username from the post request
+            $username = isset($_POST['friendbutton']) ? $_POST['friendbutton'] : $_POST['closefriendbutton'];
 
             $query = $db->prepare("SELECT * FROM users WHERE username = ?");
             $query->execute([$username]);
             $result = $query->fetch(PDO::FETCH_ASSOC);
 
-            // The username exists
-            if ($query->rowCount() > 0) 
-            {
-               // echo "This is the row count " . $query->rowCount();
-                // The user exists in the database
-               // echo "User " . $username . " exists!";
-                // Access the user's ID, email, or other fields from the $result array
-               // echo "The response from the database username is: " . $result['username'];
-               // echo "The response from the database username is: " . $result['uID'];
-                
-                // Prepare a SQL query to check if the two user IDs exist in the isfriend column
-                $query2 = $db->prepare("SELECT * FROM Canfriend WHERE (uID1 = ? AND uID2 = ?) OR (uID1 = ? AND uID2 = ?)");
-                $query2->execute([$_SESSION['uID'], $result['uID'], $result['uID'], $_SESSION['uID']]);
-                $result2 = $query2->fetch(PDO::FETCH_ASSOC);
-
-                // Check if the query returned any rows
-                if ($query2->rowCount() > 0) 
-                {
-                    // The two user IDs are friends, do nothing
-                    echo "\nAlready friends with " . $result['username'] . "\n";
-                    //echo "The two users which are " . $_SESSION['username']; . " and " . $result['username'] . " are already friends"; 
-                } 
-                else 
-                {
-                    echo "Since you are not friends with " . $result['username'] . " we are sending them a friend request\n"; 
-                    /// Prepare a SQL query to insert the user IDs and default values into the table
-                    $stmt = $db->prepare("INSERT INTO Canfriend (uID1, uID2, isclosefriend, isfriend) VALUES (?, ?, 0, 1)");
-                    $stmt->execute([$result['uID'], $_SESSION['uID']]);
+            if ($query->rowCount() === 0) {
+                if(1) {
+                    echo $username . " does not exist on SparkSocial\n";
+                    return;
                 }
-            } 
-            else 
-            {
-                // The form was not filled out
-                echo "Username does not exist";
             }
-        }
-        else if (isset($_POST['closefriendbutton'])) 
-        {
-            // The form was filled out
-            $db = get_pdo_connection();
             
-            // Check if the username exists 
-            $username = $_POST['closefriendbutton'];
-
-
-            $query3 = $db->prepare("SELECT * FROM users WHERE username = ?");
-            $query3->execute([$username]);
-            $result = $query3->fetch(PDO::FETCH_ASSOC);
-
-            // The username exists
-            if ($query3->rowCount() > 0) 
-            {
-                // echo "This is the row count " . $query->rowCount();
-                    // The user exists in the database
-                // echo "User " . $username . " exists!";
-                    // Access the user's ID, email, or other fields from the $result array
-                // echo "The response from the database username is: " . $result['username'];
-                // echo "The response from the database username is: " . $result['uID'];
-                    
-                // Prepare a SQL query to check if the two user IDs exist in the isfriend column
-                $query3 = $db->prepare("SELECT * FROM Canfriend WHERE (uID1 = ? AND uID2 = ?) OR (uID1 = ? AND uID2 = ?)");
-                $query3->execute([$_SESSION['uID'], $result['uID'], $result['uID'], $_SESSION['uID']]);
-                $result3 = $query3->fetch(PDO::FETCH_ASSOC);
-
-                    // Check if the query returned any rows
-                if ($query3->rowCount() > 0) 
-                {
-                    echo "Made " . $result['username'] . " a close friend"; 
-                    /// Prepare a SQL query to insert the user IDs and default values into the table
-                    $stmt = $db->prepare("UPDATE Canfriend SET isclosefriend = 1, isfriend = 1 WHERE uID1 = ? AND uID2 = ?");
-                    $stmt->execute([$result['uID'], $_SESSION['uID']]);
-                        
-                } 
-                else 
-                {
-                    // The user does not exist in the database
-                    echo "Add " . $username . " as friend first.";
+            // Check if they are already friends
+            $query2 = $db->prepare("SELECT * FROM Canfriend WHERE (uID1 = ? AND uID2 = ?) OR (uID1 = ? AND uID2 = ?)");
+            $query2->execute([$_SESSION['uID'], $result['uID'], $result['uID'], $_SESSION['uID']]);
+            $result2 = $query2->fetch(PDO::FETCH_ASSOC);
+            
+            // if friends 
+            if ($query2->rowCount() > 0 AND isset($_POST['closefriendbutton'])) {
+                
+                $stmt = $db->prepare("SELECT * FROM Canfriend WHERE uID1 = ? AND uID2 = ?");
+                $stmt->execute([$result['uID'], $_SESSION['uID']]);
+                $result3 = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if($result3['isclosefriend'] == 1) {
+                    echo "You are already close friends with " . $username;
+                    return;
                 }
-            } 
-            else 
-            {        
-                // The user does not exist in the database
-                echo "Add " . $username . " as friend first.";
 
-            }
+                /// Prepare a SQL query to insert the user IDs and default values into the table
+                $stmt = $db->prepare("UPDATE Canfriend SET isclosefriend = 1, isfriend = 1 WHERE uID1 = ? AND uID2 = ?");
+                $stmt->execute([$result['uID'], $_SESSION['uID']]);
+                echo $result['username'] . " is now a close friend\n";
+            } // if not friends, add as a friend
+            else if ($query2->rowCount() == 0 AND isset($_POST['friendbutton'])) {
+
+                /// Prepare a SQL query to insert the user IDs and default values into the table
+                $stmt = $db->prepare("INSERT INTO Canfriend (uID1, uID2, isclosefriend, isfriend) VALUES (?, ?, 0, 1)");
+                $stmt->execute([$result['uID'], $_SESSION['uID']]); 
+                echo "Friend request sent to " . $result['username'] . "\n"; 
+            } 
+            else {
+                echo "You are already friends with " . $username;
+            } 
         }
 }
 ?>
