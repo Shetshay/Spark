@@ -145,10 +145,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
             $result = $query->fetch(PDO::FETCH_ASSOC);
 
             if ($query->rowCount() === 0) {
-                if(1) {
                     echo $username . " does not exist on SparkSocial\n";
                     return;
-                }
             }
             
             // Check if they are already friends
