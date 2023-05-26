@@ -143,9 +143,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
             $query->execute([$username]);
             $result = $query->fetch(PDO::FETCH_ASSOC);
 
-            if ($query->rowCount() === 0) {  
-                echo $username . " does not exist on SparkSocial\n";
-                return; 
+            if ($query->rowCount() === 0) {
+                    echo $username . " does not exist on SparkSocial\n";
+                    return;
             }
             // Check if they are already friends
             $query2 = $db->prepare("SELECT * FROM Canfriend WHERE (uID1 = ? AND uID2 = ?) OR (uID1 = ? AND uID2 = ?)");
