@@ -132,11 +132,10 @@ require_once("config.php");
 <?php 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') 
 {
-
         $db = get_pdo_connection();
-        
-        if (isset($_POST['friendbutton']) || isset($_POST['closefriendbutton'])) {       
-            
+
+        if (isset($_POST['friendbutton']) || isset($_POST['closefriendbutton'])) {
+
             // Collect the username from the post request
             $username = isset($_POST['friendbutton']) ? $_POST['friendbutton'] : $_POST['closefriendbutton'];
 
@@ -144,19 +143,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
             $query->execute([$username]);
             $result = $query->fetch(PDO::FETCH_ASSOC);
 
-            if ($query->rowCount() === 0) {
-                if(1) {
-                    echo $username . " does not exist on SparkSocial\n";
-                    return;
-                }
+            if ($query->rowCount() === 0) {  
+                echo $username . " does not exist on SparkSocial\n";
+                return; 
             }
-            
             // Check if they are already friends
             $query2 = $db->prepare("SELECT * FROM Canfriend WHERE (uID1 = ? AND uID2 = ?) OR (uID1 = ? AND uID2 = ?)");
             $query2->execute([$_SESSION['uID'], $result['uID'], $result['uID'], $_SESSION['uID']]);
             $result2 = $query2->fetch(PDO::FETCH_ASSOC);
             
-            // if friends 
+            // if friends and close friend clicked, send close friend request
             if ($query2->rowCount() > 0 AND isset($_POST['closefriendbutton'])) {
                 
                 $stmt = $db->prepare("SELECT * FROM Canfriend WHERE uID1 = ? AND uID2 = ?");
@@ -169,20 +165,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
                 }
 
                 /// Prepare a SQL query to insert the user IDs and default values into the table
-                $stmt = $db->prepare("UPDATE Canfriend SET isclosefriend = 1, isfriend = 1 WHERE uID1 = ? AND uID2 = ?");
-                $stmt->execute([$result['uID'], $_SESSION['uID']]);
-                echo $result['username'] . " is now a close friend\n";
-            } // if not friends, add as a friend
+                $stmt = $db->prepare("INSERT INTO requests (requestFrom, requestTo, timeOfRequest, requestType) VALUES (?, ?, NOW(), ?)");
+                $stmt->execute([ $_SESSION['uID'], $result['uID'], "close friend"]);
+                echo "Close friend request sent to " . $result['username'];
+            } // if not friends, and friend button clicked, send friend request
             else if ($query2->rowCount() == 0 AND isset($_POST['friendbutton'])) {
 
                 /// Prepare a SQL query to insert the user IDs and default values into the table
-                $stmt = $db->prepare("INSERT INTO Canfriend (uID1, uID2, isclosefriend, isfriend) VALUES (?, ?, 0, 1)");
-                $stmt->execute([$result['uID'], $_SESSION['uID']]); 
+                $stmt = $db->prepare("INSERT INTO requests (requestFrom, requestTo, timeOfRequest, requestType) VALUES (?, ?, NOW(), ?)");
+                $stmt->execute([$_SESSION['uID'], $result['uID'], "friend"]); 
                 echo "Friend request sent to " . $result['username'] . "\n"; 
-            } 
-            else {
+            } // if already friends 
+            else if($query2->rowCount() > 0  AND isset($_POST['friendbutton'])){
                 echo "You are already friends with " . $username;
-            } 
+            } // if close friend request, but not friends first.
+            else if($query2->rowCount() == 0  AND isset($_POST['closefriendbutton'])){
+                echo "Request " . $username . " as a friend first";
+            }
         }
 }
 ?>
