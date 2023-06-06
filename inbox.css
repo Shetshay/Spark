@@ -380,3 +380,26 @@ nav a:hover::before {
     transform: translateY(10px);
     transition: 100ms;
 }
+
+
+table.GeneratedTable {
+    width: 50%;
+    border-collapse: collapse;
+    border-width: 2px;
+    border-style: solid;
+    color: #ffffff;
+    border-radius: 10px;
+}
+
+table.GeneratedTable td,
+table.GeneratedTable th {
+    border-width: 2px;
+    border-color: #6f6f6f;
+    border-style: solid;
+    padding: 3px;
+    border-radius: 10px;
+}
+
+table.GeneratedTable thead {
+    border-radius: 10px;
+}
