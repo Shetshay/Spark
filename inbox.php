@@ -8,7 +8,7 @@ $db = get_pdo_connection();
 
 <head>
     <title>Spark Social</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="stylesheet" type="text/css" href="inbox.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
@@ -85,85 +85,86 @@ $db = get_pdo_connection();
                 <h1 class='lineUp'>Inbox</h1>
             </div>
         </center>
-        
-        
+
+
         <center>
-        <?php
+            <?php
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                if(isset($_POST['accepted'])) {
-                    accept_request($_POST['requestID'], $_POST['requestFrom'], $_POST['requestType'] );
-                }
-                else {
+                if (isset($_POST['accepted'])) {
+                    accept_request($_POST['requestID'], $_POST['requestFrom'], $_POST['requestType']);
+                } else {
                     decline_request($_POST['requestID']);
                 }
             }
-            function decline_request($requestID) {
+            function decline_request($requestID)
+            {
                 global $db;
                 $delete_query = $db->prepare("DELETE FROM requests WHERE requestID = ?");
                 $delete_query->execute([$requestID]);
-            }   
+            }
 
-            function accept_request ($requestID, $requesteruID, $requestType) {
+            function accept_request($requestID, $requesteruID, $requestType)
+            {
                 global $db;
-                
-                if($requestType === "friend") {
+
+                if ($requestType === "friend") {
                     $accept_query = $db->prepare("INSERT INTO Canfriend (uID1, uID2, isclosefriend, isfriend) VALUES (?,?,0,1)");
                     $accept_query->execute([$_SESSION['uID'], $requesteruID]);
-                    
+
                 }
-                if($requestType == "close friend") {
+                if ($requestType == "close friend") {
                     $accept_close_query = $db->prepare("UPDATE Canfriend SET isclosefriend = 1, isfriend = 1 WHERE uID1 = ? AND uID2 = ? OR uID1 = ? AND uID2 = ?");
-                    $accept_close_query->execute([$_SESSION['uID'], $requesteruID, $requesteruID, $_SESSION['uID'] ]);
+                    $accept_close_query->execute([$_SESSION['uID'], $requesteruID, $requesteruID, $_SESSION['uID']]);
 
                 }
 
                 decline_request($requestID);
-                
+
             }
-             
-            function display_requests($requests, $requestCount) {
+
+            function display_requests($requests, $requestCount)
+            {
                 global $db;
                 $name_query = $db->prepare("SELECT username FROM users as u JOIN requests as r ON (u.uID = r.requestFrom) WHERE requestTo = ?");
                 $name_query->execute([$_SESSION['uID']]);
                 $name_results = $name_query->fetchAll(PDO::FETCH_ASSOC);
-                
+
                 for ($i = 0; $i < $requestCount; $i++) {
-                    echo "<h1>" . $requests[$i]['requestType'] .  " request from " . $name_results[$i]['username'] .   "</h1>";
+
+
+                    echo '<h1 style="font-size: smaller; margin-right: 12.5%;">' . $requests[$i]['requestType'] . ' request from ' . $name_results[$i]['username'] . '</h1>';
 
                     echo '
-                    <form method="post">
-                        <input type="hidden" name="requestID" value="' . $requests[$i]['requestID'] . '">
-                        <input type="hidden" name="requestFrom" value="' . $requests[$i]['requestFrom'] . '">
-                        <input type="hidden" name="requestType" value="' . $requests[$i]['requestType'] . '">
-                        <input type="hidden" name="accepted" value="' . "1" . '">
-                        <button type="submit">Accept request </button>
-                    </form>
-                    <form method="post">
-                    <input type="hidden" name="requestID" value="' . $requests[$i]['requestID'] . '">
-                    <input type="hidden" name="requestFrom" value="' . $requests[$i]['requestFrom'] . '">
-                    <input type="hidden" name="requestType" value="' . $requests[$i]['requestType'] . '">
-                    <button type="submit">decline request </button>
-                    </form>
-                    ';
+        <form method="post">
+            <input type="hidden" name="requestID" value="' . $requests[$i]['requestID'] . '">
+            <input type="hidden" name="requestFrom" value="' . $requests[$i]['requestFrom'] . '">
+            <input type="hidden" name="requestType" value="' . $requests[$i]['requestType'] . '">
+            <input type="hidden" name="accepted" value="' . "1" . '">
+            <div style="display: flex; justify-content: center;">
+            <button class="buttonpost">Accept Request</button></a>
+            <button class="buttonpost2">Deny Request</button></a>
+            </div>
+        </form>
+        ';
                 }
             }
-            
+
+
             $db = get_pdo_connection();
-            
+
             $friend_request_query = $db->prepare("SELECT * FROM requests WHERE requestTo  = ?");
             $friend_request_query->execute([$_SESSION['uID']]);
-            
+
             $friend_request_result = $friend_request_query->fetchAll(PDO::FETCH_ASSOC);
             $requestCount = $friend_request_query->rowCount();
-            if($requestCount > 0) {
-                
-                display_requests($friend_request_result, $requestCount); 
-            }
-            else {
+            if ($requestCount > 0) {
+
+                display_requests($friend_request_result, $requestCount);
+            } else {
                 echo "There are currently no requests available";
             }
-            
-        ?>
+
+            ?>
 
         </center>
 
