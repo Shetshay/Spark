@@ -130,10 +130,6 @@ $db = get_pdo_connection();
                 $name_results = $name_query->fetchAll(PDO::FETCH_ASSOC);
 
                 for ($i = 0; $i < $requestCount; $i++) {
-
-
-                    echo '<h1 style="font-size: smaller; margin-right: 12.5%;">' . $requests[$i]['requestType'] . ' request from ' . $name_results[$i]['username'] . '</h1>';
-
                     echo '
         <form method="post">
             <input type="hidden" name="requestID" value="' . $requests[$i]['requestID'] . '">
@@ -141,8 +137,22 @@ $db = get_pdo_connection();
             <input type="hidden" name="requestType" value="' . $requests[$i]['requestType'] . '">
             <input type="hidden" name="accepted" value="' . "1" . '">
             <div style="display: flex; justify-content: center;">
-            <button class="buttonpost">Accept Request</button></a>
-            <button class="buttonpost2">Deny Request</button></a>
+            
+            <table class="GeneratedTable">
+                <thead>
+                    <tr>
+                        <th><h1 style="font-size: smaller;">' . $requests[$i]['requestType'] . ' request from ' . $name_results[$i]['username'] . '</h1></th>
+                        <th>timestamp here</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="text-align: center;"><button class="buttonpost">Accept Request</button></td>
+                        <td style="text-align: center;"><button class="buttonpost2">Deny Request</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            
             </div>
         </form>
         ';
