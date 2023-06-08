@@ -93,10 +93,17 @@ $db = get_pdo_connection();
                 
                 $time = "";
                 
+                /*echo "Seconds " . $time_difference->s . "\n";
+                echo "Minutes " . $time_difference->i . "\n";
+                echo "hours " . $time_difference->h . "\n";
+                echo "days " . $time_difference->days . "\n";
+                echo "weeks " . $time_difference->days/7 . "\n";
+                echo "months " . $time_difference->m . "\n";
+                echo "years " . $time_difference->y . "\n";*/
                 if($time_difference->i == 0) {
                     $time = $time_difference->s . " seconds ago";
                 }
-                else if($time_difference->h == 0) {
+                else if($time_difference->h == 0 AND $time_difference->d == 0) {
                     $time = $time_difference->i . " minutes ago";
                 }
                 else if($time_difference->days == 0) {
