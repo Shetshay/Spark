@@ -93,6 +93,9 @@ $db = get_pdo_connection();
                 
                 $time = "";
                 
+                // Get the number of days in the current month
+                $number_of_days_in_month = cal_days_in_month(CAL_GREGORIAN, date('m'), date('Y'));
+
                 /*echo "Seconds " . $time_difference->s . "\n";
                 echo "Minutes " . $time_difference->i . "\n";
                 echo "hours " . $time_difference->h . "\n";
@@ -101,27 +104,27 @@ $db = get_pdo_connection();
                 echo "months " . $time_difference->m . "\n";
                 echo "years " . $time_difference->y . "\n";*/
                 if($time_difference->i == 0) {
-                    $time = $time_difference->s . " seconds ago";
+                    $time = $time_difference->s . " second(s) ago";
                 }
                 else if($time_difference->h == 0 AND $time_difference->d == 0) {
-                    $time = $time_difference->i . " minutes ago";
+                    $time = $time_difference->i . " minute(s) ago";
                 }
                 else if($time_difference->days == 0) {
-                    $time = $time_difference->h . " hours ago";
+                    $time = $time_difference->h . " hour(s) ago";
                 }
                 else if($time_difference->m == 0) {
                     if($time_difference->days < 7) {
-                        $time = $time_difference->days . " days ago";
+                        $time = $time_difference->days . " day(s) ago";
                     }
-                    else if($time_difference->days > 7 AND $time_difference->days < 31) {
-                        $time = $time_difference->days/ 7 . " weeks ago";
+                    else if($time_difference->days > 7 AND $time_difference->days < $number_of_days_in_month) {
+                        $time = $time_difference->days/7 . " week(s) ago";
                     }
                 }
                 else if($time_difference->y == 0) {
-                    $time = $time_difference->days/31 . " months ago";
+                    $time = $time_difference->m . " month(s) ago";
                 }
                 else if($time_difference->y >= 1) {
-                    $time = $time_difference->y . " years ago";
+                    $time = $time_difference->y . " year(s) ago";
                 }
                 
                 return $time;
