@@ -89,6 +89,36 @@ $db = get_pdo_connection();
 
         <center>
             <?php
+            function get_relevent_time_difference($time_difference) {
+                
+                $time = "";
+                
+                if($time_difference->i == 0) {
+                    $time = $time_difference->s . " seconds ago";
+                }
+                else if($time_difference->h == 0) {
+                    $time = $time_difference->i . " minutes ago";
+                }
+                else if($time_difference->days == 0) {
+                    $time = $time_difference->h . " hours ago";
+                }
+                else if($time_difference->m == 0) {
+                    if($time_difference->days < 7) {
+                        $time = $time_difference->days . " days ago";
+                    }
+                    else if($time_difference->days > 7 AND $time_difference->days < 31) {
+                        $time = $time_difference->days/ 7 . " weeks ago";
+                    }
+                }
+                else if($time_difference->y == 0) {
+                    $time = $time_difference->days/31 . " months ago";
+                }
+                else if($time_difference->y >= 1) {
+                    $time = $time_difference->y . " years ago";
+                }
+                
+                return $time;
+            }
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if (isset($_POST['accepted'])) {
                     accept_request($_POST['requestID'], $_POST['requestFrom'], $_POST['requestType']);
@@ -125,11 +155,19 @@ $db = get_pdo_connection();
             function display_requests($requests, $requestCount)
             {
                 global $db;
-                $name_query = $db->prepare("SELECT username FROM users as u JOIN requests as r ON (u.uID = r.requestFrom) WHERE requestTo = ?");
-                $name_query->execute([$_SESSION['uID']]);
-                $name_results = $name_query->fetchAll(PDO::FETCH_ASSOC);
+                $name_time_query = $db->prepare("SELECT username, timeOfRequest FROM users as u JOIN requests as r ON (u.uID = r.requestFrom) WHERE requestTo = ?");
+                $name_time_query->execute([$_SESSION['uID']]);
+                $name_time_results = $name_time_query->fetchAll(PDO::FETCH_ASSOC);
 
                 for ($i = 0; $i < $requestCount; $i++) {
+                    $current_datetime = new DateTime();
+
+                    // Get the datetime stored in the name_results['timeOfRequest'] variable
+                    $time_of_request = new DateTime($name_time_results[$i]['timeOfRequest']);
+
+                    // Calculate the time difference
+                    $time_diff = $current_datetime->diff($time_of_request);
+            
                     echo '
         <form method="post">
             <input type="hidden" name="requestID" value="' . $requests[$i]['requestID'] . '">
@@ -141,8 +179,14 @@ $db = get_pdo_connection();
             <table class="GeneratedTable">
                 <thead>
                     <tr>
-                        <th><h1 style="font-size: smaller;">' . $requests[$i]['requestType'] . ' request from ' . $name_results[$i]['username'] . '</h1></th>
-                        <th>timestamp here</th>
+                        <th>
+                            <h1 style="font-size: smaller;">' . $requests[$i]['requestType'] . ' request from ' . $name_time_results[$i]['username'] . '
+                            </h1>
+                        </th>
+                        <th> 
+                            <h1 style="font-size: smaller;">' . get_relevent_time_difference($time_diff) . '
+                            </h1>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
